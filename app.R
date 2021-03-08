@@ -29,11 +29,11 @@ data_list <- list(tcell_cd8="data_tcellcd8_results", pbmc="data_pbmc_results")
 
 
 ui <- navbarPage(
-  "Vitessce demo",
+  "Vitessce",
   
   
   tabPanel(
-    "Basic demo",
+    "Pre-programmed demo",
     fluidPage(
       #select data
       selectInput("dataset", label="Dataset:", choices=data_list),
@@ -46,7 +46,7 @@ ui <- navbarPage(
     )
   ),
 
-  tabPanel("Demo #2")
+  tabPanel("Tailored demo")
 )
 
 
@@ -65,7 +65,7 @@ server <- function(input, output, session){
     #create progress object
     progress <- shiny::Progress$new()
     progress$set(message = "", value = 0)
-    #on.exit(progress$close()) #close the progress when this reactive exits (even if there's an error)
+    on.exit(progress$close()) #close the progress when this reactive exits (even if there's an error)
     #function to update progress
     n <- 3
     updateProgress <- function(detail = NULL) {
