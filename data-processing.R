@@ -1,6 +1,6 @@
 
 library(Seurat)
-setwd("~/Dropbox/ddesktop/lab-gehlenborg/vitessce-shiny")
+setwd("~/Dropbox/ddesktop/lab-gehlenborg/")
 
 
 # function to process 10x data --------------------------------------------
@@ -48,7 +48,7 @@ data_pbmc_full <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg/seu
                                 data_name="pbmc", 
                                 min_cells=0, 
                                 min_features=0) #32738 x 2700
-saveRDS(data_pbmc_full, file="data/data_pbmc_full.rds")
+saveRDS(data_pbmc_full, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_full.rds")
 
 
 
@@ -59,7 +59,7 @@ data_pbmc_filtered <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg
                                 min_features=500) #4662 x 2482
 #analyze data for vitessce visualization
 data_pbmc_results <- analyze_data(data_pbmc_filtered)
-saveRDS(data_pbmc_results, file="data/data_pbmc_results.rds")
+saveRDS(data_pbmc_results, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_results.rds")
 
 
 
@@ -71,7 +71,7 @@ data_tcellcd8_full <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg
                                 data_name="tcellcd8", 
                                 min_cells=0, 
                                 min_features=0) #32738 x 10209
-saveRDS(data_tcellcd8_full, file="data/data_tcellcd8_full.rds")
+saveRDS(data_tcellcd8_full, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd8_full.rds")
 
 
 
@@ -82,6 +82,6 @@ data_tcellcd8_filtered <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlen
                                     min_features=500) #6171 x 7856
 #analyze data for vitessce visualization
 data_tcellcd8_results <- analyze_data(data_tcellcd8_filtered)
-saveRDS(data_tcellcd8_results, file="data/data_tcellcd8_results.rds")
+saveRDS(data_tcellcd8_results, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd8_results.rds")
 
 
