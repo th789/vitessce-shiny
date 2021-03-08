@@ -11,20 +11,44 @@ data_list <- list(tcell_cd8="data_tcellcd8_results", pbmc="data_pbmc_results")
 
 
 #user interface
-ui <- fluidPage(
+# ui <- fluidPage(
+#   
+#   titlePanel("Vitessce demo"),
+#   
+#   "Select data:",
+#   selectInput("dataset", label="Dataset", choices=data_list),
+#   
+#   "Dataset dimensions",
+#   verbatimTextOutput("dataset_dimensions"),
+#   
+#   "Vitessce visualization",
+#   vitessce_output(output_id="vitessce_visualization", height="600px")
+#   
+# )
+
+
+
+ui <- navbarPage(
+  "Vitessce demo",
   
-  titlePanel("Vitessce demo"),
   
-  "Select data:",
-  selectInput("dataset", label="Dataset", choices=data_list),
-  
-  "Dataset dimensions",
-  verbatimTextOutput("dataset_dimensions"),
-  
-  "Vitessce visualization",
-  vitessce_output(output_id="vitessce_visualization", height="600px")
-  
+  tabPanel(
+    "Basic demo",
+    fluidPage(
+      #select data
+      selectInput("dataset", label="Dataset:", choices=data_list),
+
+      "Dataset dimensions",
+      verbatimTextOutput("dataset_dimensions"),
+
+      "Vitessce visualization",
+      vitessce_output(output_id="vitessce_visualization", height="600px")
+    )
+  ),
+
+  tabPanel("Demo #2")
 )
+
 
 
 #server
@@ -78,3 +102,5 @@ server <- function(input, output, session){
 }
 
 shinyApp(ui, server)
+
+
