@@ -40,6 +40,7 @@ server <- function(input, output, session){
   #print dimensions of dataset
   output$dataset_dimensions <- renderPrint({
     dim(data())
+    paste(dim(data())[1], "genes x", dim(data())[2], "cells")
     })
   
   #vitessce visualization
@@ -49,7 +50,7 @@ server <- function(input, output, session){
     progress$set(message = "", value = 0)
     on.exit(progress$close()) #close the progress bar when this reactive exits
     #function to update progress
-    n <- 3
+    n <- 2
     updateProgress <- function(detail = NULL){
       progress$inc(amount = 1/n, detail = detail)
     }
@@ -72,9 +73,10 @@ server <- function(input, output, session){
     panel_cellsets <- vc$add_view(dataset, Component$CELL_SETS)
     panel_cellset_sizes <- vc$add_view(dataset, Component$CELL_SET_SIZES)
     panel_genes <- vc$add_view(dataset, Component$GENES)
+    panel_description <- vc$add_view(dataset, Component$DESCRIPTION)
     vc$layout(hconcat(vconcat(panel_scatterplot_pca, panel_scatterplot_umap, panel_scatterplot_tsne),
                       vconcat(panel_heatmap, panel_cellset_sizes),
-                      vconcat(panel_status, panel_cellsets, panel_genes)))
+                      vconcat(panel_description, panel_status, panel_cellsets, panel_genes)))
 
     vc$link_views(
       c(panel_scatterplot_pca, panel_scatterplot_umap, panel_scatterplot_tsne),
