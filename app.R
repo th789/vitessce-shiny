@@ -87,7 +87,7 @@ server <- function(input, output, session){
     )
 
     updateProgress("Complete!")
-    vc$widget()
+    vc$widget(theme="light")
     
   })
   
