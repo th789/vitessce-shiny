@@ -69,14 +69,16 @@ server <- function(input, output, session){
     panel_scatterplot_umap <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="umap")
     panel_scatterplot_tsne <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="tsne")
     panel_heatmap <- vc$add_view(dataset, Component$HEATMAP)
-    panel_status <- vc$add_view(dataset, Component$STATUS)
+    #panel_status <- vc$add_view(dataset, Component$STATUS)
     panel_cellsets <- vc$add_view(dataset, Component$CELL_SETS)
     panel_cellset_sizes <- vc$add_view(dataset, Component$CELL_SET_SIZES)
     panel_genes <- vc$add_view(dataset, Component$GENES)
     panel_description <- vc$add_view(dataset, Component$DESCRIPTION)
     vc$layout(hconcat(vconcat(panel_scatterplot_pca, panel_scatterplot_umap, panel_scatterplot_tsne),
                       vconcat(panel_heatmap, panel_cellset_sizes),
-                      vconcat(panel_description, panel_status, panel_cellsets, panel_genes)))
+                      vconcat(panel_description, 
+                              #panel_status, 
+                              panel_cellsets, panel_genes)))
 
     vc$link_views(
       c(panel_scatterplot_pca, panel_scatterplot_umap, panel_scatterplot_tsne),
