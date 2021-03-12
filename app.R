@@ -2,7 +2,7 @@
 library(shiny)
 library(vitessce)
 
-
+#####basic demo
 #load datasets
 data_tcellcd8_results <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd8_results.rds")
 data_pbmc_results <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_results.rds")
@@ -10,7 +10,17 @@ data_pbmc_results <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_r
 data_list <- list(tcell_cd8="data_tcellcd8_results", pbmc="data_pbmc_results")
 
 
-#user interface
+#####tailored demo
+#load datasets
+data_tcellcd8_full <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd8_full.rds")
+data_pbmc_full <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_full.rds")
+#dataset list for selection
+data_full_list <- list(tcell_cd8="data_tcellcd8_full", pbmc="data_pbmc_full")
+
+
+
+# user interface ----------------------------------------------------------
+
 ui <- navbarPage(
   "Vitessce",
   
@@ -32,13 +42,30 @@ ui <- navbarPage(
     )
   ),
 
-  tabPanel("Tailored demo")
+  tabPanel("Tailored demo",
+           fluidPage(
+             #select data
+             h4("Dataset"),
+             selectInput("dataset_full", label=NULL, choices=data_full_list),
+             
+             #select filtering criteria
+             numericInput("user_min_cells", "min.cells", 100, min=0, max=NA), #default value=100
+             numericInput("user_min_features", "min.features", 500, min=0, max=NA), #default value=500
+             
+             #print dataset dimensions
+             h4("Dataset dimensions"),
+             verbatimTextOutput("dataset_dimensions_tailored")
+             
+           ))
 )
 
 
 
-#server
+
+# server ------------------------------------------------------------------
+
 server <- function(input, output, session){
+  #####basic demo
   data <- reactive({get(input$dataset)})
   
   #print dimensions of dataset
@@ -92,6 +119,17 @@ server <- function(input, output, session){
     vc$widget(theme="light")
     
   })
+  
+  #####tailored demo
+  data_full <- reactive({get(input$dataset_full)})
+
+
+  #print dimensions of dataset
+  output$dataset_dimensions_tailored <- renderPrint({
+    dim(data_full())
+    paste(dim(data_full())[1], "genes x", dim(data_full())[2], "cells")
+  })
+  
   
 }
 
