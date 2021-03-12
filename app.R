@@ -1,6 +1,7 @@
 
 library(shiny)
 library(vitessce)
+library(Seurat)
 
 #####basic demo
 #load datasets
@@ -54,9 +55,10 @@ ui <- navbarPage(
              
              #print dataset dimensions
              h4("Dataset dimensions"),
-             verbatimTextOutput("dataset_dimensions_tailored")
-             
-           ))
+             #verbatimTextOutput("dataset_dimensions_tailored"),
+             htmlOutput("dataset_dimensions_tailored")
+             )
+           )
 )
 
 
@@ -121,18 +123,21 @@ server <- function(input, output, session){
   })
   
   #####tailored demo
+  #full dataset
   data_full <- reactive({get(input$dataset_full)})
-
+  #subset dataset
+  expr_matrix_subset <- reactive({GetAssayData(object=data_full(), slot="data")})
+  data_subset <- reactive({CreateSeuratObject(counts=expr_matrix_subset(), project="subset", min.cells=input$user_min_cells, min.features=input$user_min_features)})
 
   #print dimensions of dataset
-  output$dataset_dimensions_tailored <- renderPrint({
-    dim(data_full())
-    paste(dim(data_full())[1], "genes x", dim(data_full())[2], "cells")
+  output$dataset_dimensions_tailored <- renderUI({
+    #print dimensions
+    str_dim_data_full <- paste("Full dataset dimensions:", dim(data_full())[1], "genes x ", dim(data_full())[2], "cells")
+    str_dim_data_subset <- paste("Subsetted dataset dimensions:", dim(data_subset())[1], "genes x ", dim(data_subset())[2], "cells")
+    HTML(paste(str_dim_data_full, str_dim_data_subset, sep="<br/>"))
   })
   
   
 }
 
 shinyApp(ui, server)
-
-
