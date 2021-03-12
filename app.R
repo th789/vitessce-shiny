@@ -18,12 +18,14 @@ ui <- navbarPage(
     "Pre-programmed demo",
     fluidPage(
       #select data
-      selectInput("dataset", label="Dataset:", choices=data_list),
+      h4("Dataset"),
+      selectInput("dataset", label=NULL, choices=data_list),
 
-      "Dataset dimensions",
+      h4("Dataset dimensions"),
+      p("Filtering criteria: genes detected in at least 100 cells x cells with at least 500 genes detected"),
       verbatimTextOutput("dataset_dimensions"),
 
-      "Vitessce visualization",
+      h4("Vitessce visualization"),
       vitessce_output(output_id="vitessce_visualization", height="600px")
     )
   ),
