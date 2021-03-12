@@ -54,9 +54,9 @@ saveRDS(data_pbmc_full, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_f
 
 #filtered dataset
 data_pbmc_filtered <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg/seurat/filtered_gene_bc_matrices/hg19", 
-                                data_name="pbmc", 
-                                min_cells=100, 
-                                min_features=500) #4662 x 2482
+                                    data_name="pbmc", 
+                                    min_cells=100, 
+                                    min_features=500) #4662 x 2482
 #analyze data for vitessce visualization
 data_pbmc_results <- analyze_data(data_pbmc_filtered)
 saveRDS(data_pbmc_results, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_results.rds")

@@ -20,11 +20,13 @@ ui <- navbarPage(
       #select data
       h4("Dataset"),
       selectInput("dataset", label=NULL, choices=data_list),
-
+      
+      #print dataset dimensions
       h4("Dataset dimensions"),
       p("Filtering criteria: genes detected in at least 100 cells x cells with at least 500 genes detected"),
       verbatimTextOutput("dataset_dimensions"),
-
+      
+      #create vitessce visualization
       h4("Vitessce visualization"),
       vitessce_output(output_id="vitessce_visualization", height="600px")
     )
@@ -65,8 +67,6 @@ server <- function(input, output, session){
     dataset <- dataset$add_object(SeuratWrapper$new(data(), 
                                                     cell_set_meta_names=list("seurat_clusters"), 
                                                     num_genes=100))
-
-    updateProgress("Setting up views")
     panel_scatterplot_pca <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="pca")
     panel_scatterplot_umap <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="umap")
     panel_scatterplot_tsne <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="tsne")
