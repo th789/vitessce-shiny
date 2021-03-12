@@ -34,8 +34,7 @@ ui <- navbarPage(
       
       #print dataset dimensions
       h4("Dataset dimensions"),
-      p("Filtering criteria: genes detected in at least 100 cells x cells with at least 500 genes detected"),
-      verbatimTextOutput("dataset_dimensions"),
+      htmlOutput("dataset_dimensions"),
       
       #create vitessce visualization
       h4("Vitessce visualization"),
@@ -71,9 +70,11 @@ server <- function(input, output, session){
   data <- reactive({get(input$dataset)})
   
   #print dimensions of dataset
-  output$dataset_dimensions <- renderPrint({
+  output$dataset_dimensions <- renderUI({
     dim(data())
-    paste(dim(data())[1], "genes x", dim(data())[2], "cells")
+    str_criteria <- "Filtering criteria: genes detected in at least 100 cells (min.cells = 100), cells with at least 500 genes detected (min.features = 500)"
+    str_dim_data <- paste(dim(data())[1], "genes x", dim(data())[2], "cells")
+    HTML(paste(str_criteria, str_dim_data, sep="<br/>"))
     })
   
   #vitessce visualization
@@ -132,8 +133,8 @@ server <- function(input, output, session){
   #print dimensions of dataset
   output$dataset_dimensions_tailored <- renderUI({
     #print dimensions
-    str_dim_data_full <- paste("Full dataset dimensions:", dim(data_full())[1], "genes x ", dim(data_full())[2], "cells")
-    str_dim_data_subset <- paste("Subsetted dataset dimensions:", dim(data_subset())[1], "genes x ", dim(data_subset())[2], "cells")
+    str_dim_data_full <- paste("Original (full) dataset:", dim(data_full())[1], "genes x ", dim(data_full())[2], "cells")
+    str_dim_data_subset <- paste("Subsetted dataset:", dim(data_subset())[1], "genes x ", dim(data_subset())[2], "cells")
     HTML(paste(str_dim_data_full, str_dim_data_subset, sep="<br/>"))
   })
   
