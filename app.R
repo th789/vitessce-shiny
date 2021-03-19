@@ -10,6 +10,16 @@ data_pbmc_results <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_r
 #dataset list for selection
 data_list <- list(tcell_cd8="data_tcellcd8_results", pbmc="data_pbmc_results")
 
+data_descrip_list <- list(tcell_cd8="Dataset: CD8 T-cell \n Source: Zheng, G. X. Y. et al. Massively parallel digital transcriptional profiling of single cells. Nat. Commun. 8, 14049 doi: 10.1038/ncomms14049 (2017)", 
+                          pbmc="Dataset: peripheral blood mononuclear cells (PBMC) \n Source: 10x Genomics sample dataset")
+
+data_names_list <- list(tcell_cd8="tcellcd8", pbmc="pbmc")
+
+# descrip_tcell_cd8 = "Dataset: CD8 T-cell \n Source: Zheng, G. X. Y. et al. Massively parallel digital transcriptional profiling of single cells. Nat. Commun. 8, 14049 doi: 10.1038/ncomms14049 (2017)"
+# descrip_pbmc = "Dataset: peripheral blood mononuclear cells (PBMC) \n Source: 10x Genomics sample dataset"
+# data_list2 <- list(tcell_cd8=c("data_tcellcd8_results", "descrip_tcell_cd8"), 
+#                   pbmc=c("data_pbmc_results", "descrip_pbmc"))
+
 
 #####tailored demo
 #load datasets
@@ -31,6 +41,7 @@ ui <- navbarPage(
       #select data
       h4("Dataset"),
       selectInput("dataset", label=NULL, choices=data_list),
+      #selectInput("dataset_name", label=NULL, choices=data_names_list),
       
       #print dataset dimensions
       h4("Dataset dimensions"),
@@ -68,6 +79,8 @@ ui <- navbarPage(
 server <- function(input, output, session){
   #####basic demo
   data <- reactive({get(input$dataset)})
+  # data_name <- reactive({get(input$dataset_name)})
+  # data <- reactive({data_list[[data_name()]]})
   
   #print dimensions of dataset
   output$dataset_dimensions <- renderUI({
@@ -106,6 +119,7 @@ server <- function(input, output, session){
     panel_cellset_sizes <- vc$add_view(dataset, Component$CELL_SET_SIZES)
     panel_genes <- vc$add_view(dataset, Component$GENES)
     panel_description <- vc$add_view(dataset, Component$DESCRIPTION)
+    panel_description <- panel_description$set_props(description = "Test")
     vc$layout(hconcat(vconcat(panel_scatterplot_pca, panel_scatterplot_umap, panel_scatterplot_tsne),
                       vconcat(panel_heatmap, panel_cellset_sizes),
                       vconcat(panel_description, 
