@@ -66,9 +66,29 @@ ui <- navbarPage(
              #print dataset dimensions
              h4("Dataset dimensions"),
              #verbatimTextOutput("dataset_dimensions_tailored"),
-             htmlOutput("dataset_dimensions_tailored")
-             )
-           )
+             htmlOutput("dataset_dimensions_tailored"),
+             
+             #select panels to display in vitessce widget
+             h4("Panels to include in Vitessce visualization"),
+             fluidRow(
+               column(3,
+                      checkboxGroupInput("checkboxes_analyses", 
+                                         label="Analyses",
+                                         choices=list("PCA"=1, "UMAP"=2, "t-SNE"=3),
+                                         selected=c(1, 2, 3))),
+               column(3,
+                      checkboxGroupInput("checkboxes_summaries", 
+                                         label="Summaries",
+                                         choices=list("Heatmap"=1, "Cell set sizes"=2),
+                                         selected=c(1, 2))),
+               column(3,
+                      checkboxGroupInput("checkboxes_descrip", 
+                                         label="Descriptions",
+                                         choices=list("Dataset"=1, "Cell sets"=2, "Expression levels"=3),
+                                         selected=c(1, 2, 3)))
+               ) #end fluidRow
+             ) #end fluidPage
+           ) #end tabPanel
 )
 
 
@@ -86,7 +106,7 @@ server <- function(input, output, session){
   output$dataset_dimensions <- renderUI({
     dim(data())
     str_criteria <- "Filtering criteria: genes detected in at least 100 cells (min.cells = 100), cells with at least 500 genes detected (min.features = 500)"
-    str_dim_data <- paste(dim(data())[1], "genes x", dim(data())[2], "cells")
+    str_dim_data <- paste("Dataset dimensions:", dim(data())[1], "genes x", dim(data())[2], "cells")
     HTML(paste(str_criteria, str_dim_data, sep="<br/>"))
     })
   
