@@ -186,14 +186,13 @@ server <- function(input, output, session){
     HTML(paste(str_dim_data_full, str_dim_data_subset, sep="<br/>"))
   })
   
-  #analyze data
-  #reactive
-  data_processed <- reactive({analyze_data(data_subset())})
+  #analyze data, reactive
+  data_tailored <- reactive({analyze_data(data_subset())})
   
   #test if data analysis worked
   output$test_tailored <- renderUI({
     #print dimensions
-    str_test <- paste("Subsetted dataset:", dim(data_processed())[1], "genes x ", dim(data_processed())[2], "cells")
+    str_test <- paste("Subsetted dataset:", dim(data_tailored())[1], "genes x ", dim(data_tailored())[2], "cells")
     HTML(paste(str_test, str_test, sep="<br/>"))
   })
   
@@ -215,12 +214,44 @@ server <- function(input, output, session){
     dataset <- vc$add_dataset("My dataset")
     
     #panels: analyses
-    dataset <- dataset$add_object(SeuratWrapper$new(data(), 
+    dataset <- dataset$add_object(SeuratWrapper$new(data_tailored(), 
                                                     cell_set_meta_names=list("seurat_clusters"), 
                                                     num_genes=100))
-    panel_scatterplot_pca <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="pca")
-    panel_scatterplot_umap <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="umap")
-    panel_scatterplot_tsne <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="tsne")
+    #column_analyses <- c()
+    reactive_column_analyses <- reactive({
+      column_analyses <- c()
+      if("pca" %in% input$checkboxes_analyses){
+        panel_scatterplot_pca <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="pca")
+        column_analyses <- append(column_analyses, c(panel_scatterplot_pca))
+      }
+      if("umap" %in% input$checkboxes_analyses){
+        panel_scatterplot_umap <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="umap")
+        column_analyses <- append(column_analyses, c(panel_scatterplot_umap))
+      }
+      if("tsne" %in% input$checkboxes_analyses){
+        panel_scatterplot_tsne <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="tsne")
+        column_analyses <- append(column_analyses, c(panel_scatterplot_tsne))
+      }
+      column_analyses
+      })
+    
+    # column_analyses <- c()
+    # if("pca" %in% input$checkboxes_analyses){
+    #   panel_scatterplot_pca <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="pca")
+    #   column_analyses <- append(column_analyses, panel_scatterplot_pca)
+    # }
+    # if("umap" %in% input$checkboxes_analyses){
+    #   panel_scatterplot_umap <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="umap")
+    #   column_analyses <- append(column_analyses, panel_scatterplot_umap)
+    # }
+    # if("tsne" %in% input$checkboxes_analyses){
+    #   panel_scatterplot_tsne <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="tsne")
+    #   column_analyses <- append(column_analyses, panel_scatterplot_tsne)
+    # }
+    
+    #panel_scatterplot_pca <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="pca")
+    #panel_scatterplot_umap <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="umap")
+    #panel_scatterplot_tsne <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="tsne")
     
     #panels: summaries
     panel_heatmap <- vc$add_view(dataset, Component$HEATMAP)
@@ -232,14 +263,19 @@ server <- function(input, output, session){
     panel_description <- vc$add_view(dataset, Component$DESCRIPTION)
     panel_description <- panel_description$set_props(description = "Test")
     
+    #run reactives to create/update columns
+    #reactive_column_analyses()
+    
     #layout panels
-    vc$layout(hconcat(vconcat(panel_scatterplot_pca, panel_scatterplot_umap, panel_scatterplot_tsne),
+    vc$layout(hconcat(reactive_column_analyses(),
                       vconcat(panel_heatmap, panel_cellset_sizes),
-                      vconcat(panel_description, 
-                              panel_cellsets, panel_genes)))
+                      vconcat(panel_description, panel_cellsets, panel_genes)
+                      )
+              )
+
     
     vc$link_views(
-      c(panel_scatterplot_pca, panel_scatterplot_umap, panel_scatterplot_tsne),
+      c(reactive_column_analyses()),
       c(CoordinationType$EMBEDDING_ZOOM, CoordinationType$EMBEDDING_TARGET_X, CoordinationType$EMBEDDING_TARGET_Y),
       c_values = c(1, 0, 0)
     )
