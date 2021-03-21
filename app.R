@@ -75,18 +75,18 @@ ui <- navbarPage(
                column(3,
                       checkboxGroupInput("checkboxes_analyses", 
                                          label="Analyses",
-                                         choices=list("PCA"=1, "UMAP"=2, "t-SNE"=3),
-                                         selected=c(1, 2, 3))),
+                                         choices=list("PCA"="pca", "UMAP"="umap", "t-SNE"="tsne"),
+                                         selected=c("pca", "umap", "tsne"))),
                column(3,
                       checkboxGroupInput("checkboxes_summaries", 
                                          label="Summaries",
-                                         choices=list("Heatmap"=1, "Cell set sizes"=2),
-                                         selected=c(1, 2))),
+                                         choices=list("Heatmap"="heatmap", "Cell set sizes"="cell_set_sizes"),
+                                         selected=c("heatmap", "cell_set_sizes"))),
                column(3,
                       checkboxGroupInput("checkboxes_descrip", 
                                          label="Descriptions",
-                                         choices=list("Dataset"=1, "Cell sets"=2, "Expression levels"=3),
-                                         selected=c(1, 2, 3)))
+                                         choices=list("Dataset"="dataset_descrip", "Cell sets"="cell_sets", "Expression levels"="expr_levels"),
+                                         selected=c("dataset_descrip", "cell_sets", "expr_levels")))
                ), #end fluidRow
              
              #test if data processing worked
@@ -203,7 +203,6 @@ server <- function(input, output, session){
     updateProgress <- function(detail = NULL){
       progress$inc(amount = 1/n, detail = detail)
     }
-    
     
     #set up widget
     updateProgress("Creating Vitessce visualization")
