@@ -1,4 +1,6 @@
 
+# load data & packages ----------------------------------------------------
+
 library(shiny)
 library(vitessce)
 library(Seurat)
@@ -36,6 +38,7 @@ data_full_list <- list(tcell_cd8="data_tcellcd8_full", pbmc="data_pbmc_full")
 ui <- navbarPage(
   "Vitessce",
   
+  ##### ui: basic demo ----------------------------------------------------
   tabPanel(
     "Pre-programmed demo",
     fluidPage(
@@ -54,6 +57,7 @@ ui <- navbarPage(
     )
   ),
 
+  ##### ui: tailored demo -------------------------------------------------
   tabPanel("Tailored demo",
            fluidPage(
              #select data
@@ -107,7 +111,8 @@ ui <- navbarPage(
 # server ------------------------------------------------------------------
 
 server <- function(input, output, session){
-  #####basic demo
+  
+  ##### server: basic demo ------------------------------------------------
   data <- reactive({get(input$dataset)})
   # data_name <- reactive({get(input$dataset_name)})
   # data <- reactive({data_list[[data_name()]]})
@@ -166,7 +171,7 @@ server <- function(input, output, session){
     
   }) #end vitessce visualization output
   
-  #####tailored demo
+  ##### server: tailored demo ---------------------------------------------
   #full dataset
   data_full <- reactive({get(input$dataset_full)})
   #subset dataset
@@ -196,7 +201,7 @@ server <- function(input, output, session){
   output$vitessce_visualization_tailored <- render_vitessce(expr={
     #create progress object
     progress <- shiny::Progress$new()
-    progress$set(message = "", value = 0)
+    progress$set(message="", value = 0)
     on.exit(progress$close()) #close the progress bar when this reactive exits
     #function to update progress
     n <- 2
@@ -246,5 +251,9 @@ server <- function(input, output, session){
   
   
 }
+
+
+
+# app ---------------------------------------------------------------------
 
 shinyApp(ui, server)
