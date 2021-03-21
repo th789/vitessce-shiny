@@ -217,7 +217,7 @@ server <- function(input, output, session){
     dataset <- dataset$add_object(SeuratWrapper$new(data_tailored(), 
                                                     cell_set_meta_names=list("seurat_clusters"), 
                                                     num_genes=100))
-    #column_analyses <- c()
+    #panels: summaries (column 1)
     reactive_column_analyses <- reactive({
       column_analyses <- c()
       if("pca" %in% input$checkboxes_analyses){
@@ -234,6 +234,21 @@ server <- function(input, output, session){
       }
       column_analyses
       })
+    
+    
+    #panels: summaries (column 2)
+    reactive_column_summaries <- reactive({
+      column_summaries <- c()
+      if("heatmap" %in% input$checkboxes_summaries){
+        panel_heatmap <- vc$add_view(dataset, Component$HEATMAP)
+        column_summaries <- append(column_summaries, c(panel_heatmap))
+      }
+      if("cell_set_sizes" %in% input$checkboxes_summaries){
+        panel_cellset_sizes <- vc$add_view(dataset, Component$CELL_SET_SIZES)
+        column_summaries <- append(column_summaries, c(panel_cellset_sizes))
+      }
+      column_summaries
+    })
     
     # column_analyses <- c()
     # if("pca" %in% input$checkboxes_analyses){
@@ -253,9 +268,9 @@ server <- function(input, output, session){
     #panel_scatterplot_umap <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="umap")
     #panel_scatterplot_tsne <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="tsne")
     
-    #panels: summaries
-    panel_heatmap <- vc$add_view(dataset, Component$HEATMAP)
-    panel_cellset_sizes <- vc$add_view(dataset, Component$CELL_SET_SIZES)
+    # #panels: summaries
+    # panel_heatmap <- vc$add_view(dataset, Component$HEATMAP)
+    # panel_cellset_sizes <- vc$add_view(dataset, Component$CELL_SET_SIZES)
     
     #panels: descriptions
     panel_cellsets <- vc$add_view(dataset, Component$CELL_SETS)
@@ -263,16 +278,19 @@ server <- function(input, output, session){
     panel_description <- vc$add_view(dataset, Component$DESCRIPTION)
     panel_description <- panel_description$set_props(description = "Test")
     
-    #run reactives to create/update columns
-    #reactive_column_analyses()
+    #layout panels: run reactives to create/update columns
+    # vc$layout(hconcat(vconcat(reactive_column_analyses()),
+    #                   vconcat(reactive_column_summaries()),
+    #                   vconcat(panel_description, panel_cellsets, panel_genes)
+    #                   )
+    #           )
     
-    #layout panels
-    vc$layout(hconcat(reactive_column_analyses(),
-                      vconcat(panel_heatmap, panel_cellset_sizes),
+    #working version
+    vc$layout(hconcat(vconcat(reactive_column_analyses()[[1]], reactive_column_analyses()[[2]], reactive_column_analyses()[[3]]),
+                      vconcat(reactive_column_summaries()[[1]], reactive_column_summaries()[[2]]),
                       vconcat(panel_description, panel_cellsets, panel_genes)
                       )
-              )
-
+    )
     
     vc$link_views(
       c(reactive_column_analyses()),
