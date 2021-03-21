@@ -89,9 +89,13 @@ ui <- navbarPage(
                                          selected=c(1, 2, 3)))
                ), #end fluidRow
              
-             #print dataset dimensions
+             #test if data processing worked
              h4("Test if data processing worked"),
              htmlOutput("test_tailored"),
+             
+             #create vitessce visualization
+             h4("Vitessce visualization"),
+             vitessce_output(output_id="vitessce_visualization_tailored", height="600px")
              
              ) #end fluidPage
            ) #end tabPanel
@@ -117,7 +121,7 @@ server <- function(input, output, session){
     })
   
   #vitessce visualization
-  output$vitessce_visualization <- render_vitessce(expr = {
+  output$vitessce_visualization <- render_vitessce(expr={
     #create progress object
     progress <- shiny::Progress$new()
     progress$set(message = "", value = 0)
@@ -127,7 +131,6 @@ server <- function(input, output, session){
     updateProgress <- function(detail = NULL){
       progress$inc(amount = 1/n, detail = detail)
     }
-    
     
     #set up widget
     updateProgress("Creating Vitessce visualization")
@@ -161,7 +164,7 @@ server <- function(input, output, session){
     updateProgress("Complete!")
     vc$widget(theme="light")
     
-  })
+  }) #end vitessce visualization output
   
   #####tailored demo
   #full dataset
@@ -183,12 +186,6 @@ server <- function(input, output, session){
   data_processed <- reactive({analyze_data(data_subset())})
   
   #test if data analysis worked
-  # output$test_tailored <- renderUI({
-  #   #print dimensions
-  #   print(dim(data_processed()))
-  # })
-  
-  
   output$test_tailored <- renderUI({
     #print dimensions
     str_test <- paste("Subsetted dataset:", dim(data_processed())[1], "genes x ", dim(data_processed())[2], "cells")
@@ -196,6 +193,57 @@ server <- function(input, output, session){
   })
   
   #vitessce visualization
+  output$vitessce_visualization_tailored <- render_vitessce(expr={
+    #create progress object
+    progress <- shiny::Progress$new()
+    progress$set(message = "", value = 0)
+    on.exit(progress$close()) #close the progress bar when this reactive exits
+    #function to update progress
+    n <- 2
+    updateProgress <- function(detail = NULL){
+      progress$inc(amount = 1/n, detail = detail)
+    }
+    
+    
+    #set up widget
+    updateProgress("Creating Vitessce visualization")
+    vc <- VitessceConfig$new("My config")
+    dataset <- vc$add_dataset("My dataset")
+    
+    #panels: analyses
+    dataset <- dataset$add_object(SeuratWrapper$new(data(), 
+                                                    cell_set_meta_names=list("seurat_clusters"), 
+                                                    num_genes=100))
+    panel_scatterplot_pca <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="pca")
+    panel_scatterplot_umap <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="umap")
+    panel_scatterplot_tsne <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="tsne")
+    
+    #panels: summaries
+    panel_heatmap <- vc$add_view(dataset, Component$HEATMAP)
+    panel_cellset_sizes <- vc$add_view(dataset, Component$CELL_SET_SIZES)
+    
+    #panels: descriptions
+    panel_cellsets <- vc$add_view(dataset, Component$CELL_SETS)
+    panel_genes <- vc$add_view(dataset, Component$GENES)
+    panel_description <- vc$add_view(dataset, Component$DESCRIPTION)
+    panel_description <- panel_description$set_props(description = "Test")
+    
+    #layout panels
+    vc$layout(hconcat(vconcat(panel_scatterplot_pca, panel_scatterplot_umap, panel_scatterplot_tsne),
+                      vconcat(panel_heatmap, panel_cellset_sizes),
+                      vconcat(panel_description, 
+                              panel_cellsets, panel_genes)))
+    
+    vc$link_views(
+      c(panel_scatterplot_pca, panel_scatterplot_umap, panel_scatterplot_tsne),
+      c(CoordinationType$EMBEDDING_ZOOM, CoordinationType$EMBEDDING_TARGET_X, CoordinationType$EMBEDDING_TARGET_Y),
+      c_values = c(1, 0, 0)
+    )
+    
+    updateProgress("Complete!")
+    vc$widget(theme="light")
+    
+  })
   
   
 }
