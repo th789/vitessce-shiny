@@ -91,7 +91,7 @@ ui <- navbarPage(
              
              #print dataset dimensions
              h4("Test if data processing worked"),
-             verbatimTextOutput("test_tailored"),
+             htmlOutput("test_tailored"),
              
              ) #end fluidPage
            ) #end tabPanel
@@ -183,9 +183,16 @@ server <- function(input, output, session){
   data_processed <- reactive({analyze_data(data_subset())})
   
   #test if data analysis worked
+  # output$test_tailored <- renderUI({
+  #   #print dimensions
+  #   print(dim(data_processed()))
+  # })
+  
+  
   output$test_tailored <- renderUI({
     #print dimensions
-    print(dim(data_processed()))
+    str_test <- paste("Subsetted dataset:", dim(data_processed())[1], "genes x ", dim(data_processed())[2], "cells")
+    HTML(paste(str_test, str_test, sep="<br/>"))
   })
   
   #vitessce visualization
