@@ -89,8 +89,8 @@ ui <- navbarPage(
                column(3,
                       checkboxGroupInput("checkboxes_descrip", 
                                          label="Descriptions",
-                                         choices=list("Dataset"="dataset_descrip", "Cell sets"="cell_sets", "Expression levels"="expr_levels"),
-                                         selected=c("dataset_descrip", "cell_sets", "expr_levels")))
+                                         choices=list("Dataset"="dataset_descrip", "Cell sets"="cell_sets", "Genes"="genes"),
+                                         selected=c("dataset_descrip", "cell_sets", "genes")))
                ), #end fluidRow
              
              #test if data processing worked
@@ -217,66 +217,56 @@ server <- function(input, output, session){
     dataset <- dataset$add_object(SeuratWrapper$new(data_tailored(), 
                                                     cell_set_meta_names=list("seurat_clusters"), 
                                                     num_genes=100))
-    #panels: summaries (column 1)
+    #panels: analyses (column 1)
     reactive_column_analyses <- reactive({
-      column_analyses <- c()
+      column_panels <- c()
       if("pca" %in% input$checkboxes_analyses){
         panel_scatterplot_pca <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="pca")
-        column_analyses <- append(column_analyses, c(panel_scatterplot_pca))
+        column_panels <- append(column_panels, c(panel_scatterplot_pca))
       }
       if("umap" %in% input$checkboxes_analyses){
         panel_scatterplot_umap <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="umap")
-        column_analyses <- append(column_analyses, c(panel_scatterplot_umap))
+        column_panels <- append(column_panels, c(panel_scatterplot_umap))
       }
       if("tsne" %in% input$checkboxes_analyses){
         panel_scatterplot_tsne <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="tsne")
-        column_analyses <- append(column_analyses, c(panel_scatterplot_tsne))
+        column_panels <- append(column_panels, c(panel_scatterplot_tsne))
       }
-      column_analyses
+      column_panels
       })
-    
     
     #panels: summaries (column 2)
     reactive_column_summaries <- reactive({
-      column_summaries <- c()
+      column_panels <- c()
       if("heatmap" %in% input$checkboxes_summaries){
         panel_heatmap <- vc$add_view(dataset, Component$HEATMAP)
-        column_summaries <- append(column_summaries, c(panel_heatmap))
+        column_panels <- append(column_panels, c(panel_heatmap))
       }
       if("cell_set_sizes" %in% input$checkboxes_summaries){
         panel_cellset_sizes <- vc$add_view(dataset, Component$CELL_SET_SIZES)
-        column_summaries <- append(column_summaries, c(panel_cellset_sizes))
+        column_panels <- append(column_panels, c(panel_cellset_sizes))
       }
-      column_summaries
+      column_panels
     })
     
-    # column_analyses <- c()
-    # if("pca" %in% input$checkboxes_analyses){
-    #   panel_scatterplot_pca <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="pca")
-    #   column_analyses <- append(column_analyses, panel_scatterplot_pca)
-    # }
-    # if("umap" %in% input$checkboxes_analyses){
-    #   panel_scatterplot_umap <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="umap")
-    #   column_analyses <- append(column_analyses, panel_scatterplot_umap)
-    # }
-    # if("tsne" %in% input$checkboxes_analyses){
-    #   panel_scatterplot_tsne <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="tsne")
-    #   column_analyses <- append(column_analyses, panel_scatterplot_tsne)
-    # }
-    
-    #panel_scatterplot_pca <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="pca")
-    #panel_scatterplot_umap <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="umap")
-    #panel_scatterplot_tsne <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="tsne")
-    
-    # #panels: summaries
-    # panel_heatmap <- vc$add_view(dataset, Component$HEATMAP)
-    # panel_cellset_sizes <- vc$add_view(dataset, Component$CELL_SET_SIZES)
-    
-    #panels: descriptions
-    panel_cellsets <- vc$add_view(dataset, Component$CELL_SETS)
-    panel_genes <- vc$add_view(dataset, Component$GENES)
-    panel_description <- vc$add_view(dataset, Component$DESCRIPTION)
-    panel_description <- panel_description$set_props(description = "Test")
+    #panels: description (column 3)
+    reactive_column_descrip <- reactive({
+      column_panels <- c()
+      if("dataset_descrip" %in% input$checkboxes_descrip){
+        panel_description <- vc$add_view(dataset, Component$DESCRIPTION)
+        panel_description <- panel_description$set_props(description = "Test")
+        column_panels <- append(column_panels, c(panel_description))
+      }
+      if("cell_sets" %in% input$checkboxes_descrip){
+        panel_cellsets <- vc$add_view(dataset, Component$CELL_SETS)
+        column_panels <- append(column_panels, c(panel_cellsets))
+      }
+      if("genes" %in% input$checkboxes_descrip){
+        panel_genes <- vc$add_view(dataset, Component$GENES)
+        column_panels <- append(column_panels, c(panel_genes))
+      }
+      column_panels
+    })
     
     #layout panels: run reactives to create/update columns
     # vc$layout(hconcat(vconcat(reactive_column_analyses()),
@@ -288,7 +278,7 @@ server <- function(input, output, session){
     #working version
     vc$layout(hconcat(vconcat(reactive_column_analyses()[[1]], reactive_column_analyses()[[2]], reactive_column_analyses()[[3]]),
                       vconcat(reactive_column_summaries()[[1]], reactive_column_summaries()[[2]]),
-                      vconcat(panel_description, panel_cellsets, panel_genes)
+                      vconcat(reactive_column_descrip()[[1]], reactive_column_descrip()[[2]], reactive_column_descrip()[[3]])
                       )
     )
     
