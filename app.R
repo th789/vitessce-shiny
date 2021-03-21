@@ -90,7 +90,12 @@ ui <- navbarPage(
                       checkboxGroupInput("checkboxes_descrip", 
                                          label="Descriptions",
                                          choices=list("Dataset"="dataset_descrip", "Cell sets"="cell_sets", "Genes"="genes"),
-                                         selected=c("dataset_descrip", "cell_sets", "genes")))
+                                         selected=c("dataset_descrip", "cell_sets", "genes"))),
+               column(3,
+                      checkboxGroupInput("checkboxes_view", 
+                                         label="View",
+                                         choices=list("Link scatterplots"="link_scatterplots", "Light theme"="light_theme"),
+                                         selected=c("link_scatterplots", "light_theme")))
                ), #end fluidRow
              
              #test if data processing worked
@@ -222,15 +227,15 @@ server <- function(input, output, session){
       column_panels <- c()
       if("pca" %in% input$checkboxes_analyses){
         panel_scatterplot_pca <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="pca")
-        column_panels <- append(column_panels, c(panel_scatterplot_pca))
+        column_panels <- append(column_panels, panel_scatterplot_pca)
       }
       if("umap" %in% input$checkboxes_analyses){
         panel_scatterplot_umap <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="umap")
-        column_panels <- append(column_panels, c(panel_scatterplot_umap))
+        column_panels <- append(column_panels, panel_scatterplot_umap)
       }
       if("tsne" %in% input$checkboxes_analyses){
         panel_scatterplot_tsne <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="tsne")
-        column_panels <- append(column_panels, c(panel_scatterplot_tsne))
+        column_panels <- append(column_panels, panel_scatterplot_tsne)
       }
       column_panels
       })
@@ -240,11 +245,11 @@ server <- function(input, output, session){
       column_panels <- c()
       if("heatmap" %in% input$checkboxes_summaries){
         panel_heatmap <- vc$add_view(dataset, Component$HEATMAP)
-        column_panels <- append(column_panels, c(panel_heatmap))
+        column_panels <- append(column_panels, panel_heatmap)
       }
       if("cell_set_sizes" %in% input$checkboxes_summaries){
         panel_cellset_sizes <- vc$add_view(dataset, Component$CELL_SET_SIZES)
-        column_panels <- append(column_panels, c(panel_cellset_sizes))
+        column_panels <- append(column_panels, panel_cellset_sizes)
       }
       column_panels
     })
@@ -255,41 +260,73 @@ server <- function(input, output, session){
       if("dataset_descrip" %in% input$checkboxes_descrip){
         panel_description <- vc$add_view(dataset, Component$DESCRIPTION)
         panel_description <- panel_description$set_props(description = "Test")
-        column_panels <- append(column_panels, c(panel_description))
+        column_panels <- append(column_panels, panel_description)
       }
       if("cell_sets" %in% input$checkboxes_descrip){
         panel_cellsets <- vc$add_view(dataset, Component$CELL_SETS)
-        column_panels <- append(column_panels, c(panel_cellsets))
+        column_panels <- append(column_panels, panel_cellsets)
       }
       if("genes" %in% input$checkboxes_descrip){
         panel_genes <- vc$add_view(dataset, Component$GENES)
-        column_panels <- append(column_panels, c(panel_genes))
+        column_panels <- append(column_panels, panel_genes)
       }
       column_panels
     })
     
+    
+    # #view options: link scatterplots
+    # reactive_link_scatterplots <- reactive({
+    #   if("XXX" %in% input$checkboxes_view){
+    #     vc$layout(hconcat(do.call(vconcat, as.list(reactive_column_analyses())),
+    #                       vconcat(reactive_column_summaries()[[1]], reactive_column_summaries()[[2]]),
+    #                       vconcat(reactive_column_descrip()[[1]], reactive_column_descrip()[[2]], reactive_column_descrip()[[3]])
+    #                       )
+    #               )
+    #   }
+    #   if(!("XXX" %in% input$checkboxes_view)){
+    #     vc$layout(hconcat(vconcat(reactive_column_analyses()[[1]], reactive_column_analyses()[[2]], reactive_column_analyses()[[3]]),
+    #                       vconcat(reactive_column_summaries()[[1]], reactive_column_summaries()[[2]]),
+    #                       vconcat(reactive_column_descrip()[[1]], reactive_column_descrip()[[2]], reactive_column_descrip()[[3]])
+    #                       )
+    #               )
+    #     vc$link_views(c(reactive_column_analyses()),
+    #                   c(CoordinationType$EMBEDDING_ZOOM, CoordinationType$EMBEDDING_TARGET_X, CoordinationType$EMBEDDING_TARGET_Y),
+    #                   c_values = c(1, 0, 0)
+    #     )}
+    # 
+    # })
+    
+    
+    #view options: theme
+    reactive_light_theme <- reactive({
+      if("light_theme" %in% input$checkboxes_view){vc$widget(theme="light")}
+      else{vc$widget(theme="dark")}
+    })
+    
     #layout panels: run reactives to create/update columns
-    # vc$layout(hconcat(vconcat(reactive_column_analyses()),
-    #                   vconcat(reactive_column_summaries()),
-    #                   vconcat(panel_description, panel_cellsets, panel_genes)
-    #                   )
-    #           )
+    vc$layout(hconcat(do.call(vconcat, as.list(reactive_column_analyses())),
+                      do.call(vconcat, as.list(reactive_column_summaries())),
+                      do.call(vconcat, as.list(reactive_column_descrip()))
+                      )
+              )
     
     #working version
-    vc$layout(hconcat(vconcat(reactive_column_analyses()[[1]], reactive_column_analyses()[[2]], reactive_column_analyses()[[3]]),
-                      vconcat(reactive_column_summaries()[[1]], reactive_column_summaries()[[2]]),
-                      vconcat(reactive_column_descrip()[[1]], reactive_column_descrip()[[2]], reactive_column_descrip()[[3]])
-                      )
-    )
+    # vc$layout(hconcat(vconcat(reactive_column_analyses()[[1]], reactive_column_analyses()[[2]], reactive_column_analyses()[[3]]),
+    #                   vconcat(reactive_column_summaries()[[1]], reactive_column_summaries()[[2]]),
+    #                   vconcat(reactive_column_descrip()[[1]], reactive_column_descrip()[[2]], reactive_column_descrip()[[3]])
+    #                   )
+    # )
     
+    #reactive_link_scatterplots()
     vc$link_views(
-      c(reactive_column_analyses()),
+      reactive_column_analyses(),
       c(CoordinationType$EMBEDDING_ZOOM, CoordinationType$EMBEDDING_TARGET_X, CoordinationType$EMBEDDING_TARGET_Y),
       c_values = c(1, 0, 0)
     )
     
+    
     updateProgress("Complete!")
-    vc$widget(theme="light")
+    reactive_light_theme()
     
   })
   
