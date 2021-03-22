@@ -101,9 +101,9 @@ ui <- navbarPage(
                                          selected=c("link_scatterplots", "light_theme")))
                ), #end fluidRow
              
-             #test if data processing worked
-             h4("Test if data processing worked"),
-             htmlOutput("test_tailored"),
+             # #test if data processing worked
+             # h4("Test if data processing worked"),
+             # htmlOutput("test_tailored"),
              
              #create vitessce visualization
              h4("Vitessce visualization"),
@@ -197,12 +197,12 @@ server <- function(input, output, session){
   #analyze data, reactive
   data_tailored <- reactive({analyze_data(data_subset())})
   
-  #test if data analysis worked
-  output$test_tailored <- renderUI({
-    #print dimensions
-    str_test <- paste("Subsetted dataset:", dim(data_tailored())[1], "genes x ", dim(data_tailored())[2], "cells")
-    HTML(paste(str_test, str_test, sep="<br/>"))
-  })
+  # #test if data analysis worked
+  # output$test_tailored <- renderUI({
+  #   #print dimensions
+  #   str_test <- paste("Subsetted dataset:", dim(data_tailored())[1], "genes x ", dim(data_tailored())[2], "cells")
+  #   HTML(paste(str_test, str_test, sep="<br/>"))
+  # })
   
   #vitessce visualization
   output$vitessce_visualization_tailored <- render_vitessce(expr={
@@ -317,8 +317,7 @@ server <- function(input, output, session){
         }
     }) #end reactive: reactive_link_scatterplots
     
-    #vc$link_views(c(), c(), c_values=c())
-    
+
     #view options: theme
     reactive_light_theme <- reactive({
       if("light_theme" %in% input$checkboxes_view){vc$widget(theme="light")}
