@@ -306,8 +306,16 @@ server <- function(input, output, session){
                       c(CoordinationType$EMBEDDING_ZOOM, CoordinationType$EMBEDDING_TARGET_X, CoordinationType$EMBEDDING_TARGET_Y),
                       c_values=c(1, 0, 0)
         )}
-      if(!("link_scatterplots" %in% input$checkboxes_view)){}
-    })
+      #if(!("link_scatterplots" %in% input$checkboxes_view)){}
+      else{
+        for(view in reactive_column_analyses()){
+          vc$link_views(c(view),
+                        c(CoordinationType$EMBEDDING_ZOOM, CoordinationType$EMBEDDING_TARGET_X, CoordinationType$EMBEDDING_TARGET_Y),
+                        c(1, 0, 0)
+                        )
+          }
+        }
+    }) #end reactive: reactive_link_scatterplots
     
     #vc$link_views(c(), c(), c_values=c())
     
