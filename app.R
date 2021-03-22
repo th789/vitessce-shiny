@@ -65,8 +65,11 @@ ui <- navbarPage(
              selectInput("dataset_full", label=NULL, choices=data_full_list),
              
              #select filtering criteria
-             numericInput("user_min_cells", "min.cells", 100, min=0, max=NA), #default value=100
-             numericInput("user_min_features", "min.features", 500, min=0, max=NA), #default value=500
+             h4("Data subsetting"),
+             fluidRow(
+               column(3, numericInput("user_min_cells", HTML("min.cells<br>(keep genes detected in at least <i>min.cells</i> cells)"), 100, min=0, max=NA)), #default value=100
+               column(3, numericInput("user_min_features", HTML("min.features<br>(keep cells with at least <i>min.features</i> genes detected)"), 500, min=0, max=NA)) #default value=500
+             ),
              
              #print dataset dimensions
              h4("Dataset dimensions"),
