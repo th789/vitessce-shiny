@@ -93,7 +93,7 @@ ui <- navbarPage(
                                          selected=c("dataset_descrip", "cell_sets", "genes"))),
                column(3,
                       checkboxGroupInput("checkboxes_view", 
-                                         label="View",
+                                         label="View options",
                                          choices=list("Link scatterplots"="link_scatterplots", "Light theme"="light_theme"),
                                          selected=c("link_scatterplots", "light_theme")))
                ), #end fluidRow
@@ -297,6 +297,17 @@ server <- function(input, output, session){
     # })
     
     
+    reactive_link_scatterplots <- reactive({
+      if("link_scatterplots" %in% input$checkboxes_view){
+        vc$link_views(reactive_column_analyses(),
+                      c(CoordinationType$EMBEDDING_ZOOM, CoordinationType$EMBEDDING_TARGET_X, CoordinationType$EMBEDDING_TARGET_Y),
+                      c_values=c(1, 0, 0)
+        )}
+      if(!("link_scatterplots" %in% input$checkboxes_view)){}
+    })
+    
+    #vc$link_views(c(), c(), c_values=c())
+    
     #view options: theme
     reactive_light_theme <- reactive({
       if("light_theme" %in% input$checkboxes_view){vc$widget(theme="light")}
@@ -317,13 +328,14 @@ server <- function(input, output, session){
     #                   )
     # )
     
-    #reactive_link_scatterplots()
-    vc$link_views(
-      reactive_column_analyses(),
-      c(CoordinationType$EMBEDDING_ZOOM, CoordinationType$EMBEDDING_TARGET_X, CoordinationType$EMBEDDING_TARGET_Y),
-      c_values = c(1, 0, 0)
-    )
+    # #reactive_link_scatterplots()
+    # vc$link_views(
+    #   reactive_column_analyses(),
+    #   c(CoordinationType$EMBEDDING_ZOOM, CoordinationType$EMBEDDING_TARGET_X, CoordinationType$EMBEDDING_TARGET_Y),
+    #   c_values = c(1, 0, 0)
+    # )
     
+    reactive_link_scatterplots()
     
     updateProgress("Complete!")
     reactive_light_theme()
