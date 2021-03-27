@@ -10,6 +10,8 @@ read_10x_data <- function(directory, data_name, min_cells, min_features){
   data_10x <- Read10X(data.dir=directory)
   #create SeuratObject
   data_seurat <- CreateSeuratObject(counts=data_10x, project=data_name, min.cells=min_cells, min.features=min_features)
+  #quality control: detect amount of mitochondrial DNA
+  data_seurat[["percent.mt"]] <- PercentageFeatureSet(data_seurat, pattern = "^MT-")
   #print data dimensions
   print("dataset dimensions (genes x cells):")
   print(dim(data_seurat))
@@ -41,6 +43,7 @@ analyze_data <- function(data){
   return(data)
 }
 
+
 # pbmc --------------------------------------------------------------------
 
 #full dataset
@@ -57,6 +60,9 @@ data_pbmc_filtered <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg
                                     data_name="pbmc", 
                                     min_cells=100, 
                                     min_features=500) #4662 x 2482
+data_pbmc_filtered <- subset(data_pbmc_filtered, subset=percent.mt<5) 
+dim(data_pbmc_filtered) #4662 x 2439
+
 #analyze data for vitessce visualization
 data_pbmc_results <- analyze_data(data_pbmc_filtered)
 saveRDS(data_pbmc_results, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_results.rds")
@@ -80,6 +86,9 @@ data_tcellcd8_filtered <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlen
                                     data_name="tcellcd8", 
                                     min_cells=100, 
                                     min_features=500) #6171 x 7856
+data_tcellcd8_filtered <- subset(data_tcellcd8_filtered, subset=percent.mt<5) 
+dim(data_tcellcd8_filtered) #6171 x 7850
+
 #analyze data for vitessce visualization
 data_tcellcd8_results <- analyze_data(data_tcellcd8_filtered)
 saveRDS(data_tcellcd8_results, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd8_results.rds")
