@@ -28,6 +28,7 @@ data_names_list <- list(tcell_cd8="tcellcd8", pbmc="pbmc")
 #load datasets
 data_tcellcd8_full <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd8_full.rds")
 data_pbmc_full <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_full.rds")
+
 #dataset list for selection
 data_full_list <- list(tcell_cd8="data_tcellcd8_full", pbmc="data_pbmc_full")
 
@@ -68,7 +69,8 @@ ui <- navbarPage(
              h4("Data subsetting"),
              fluidRow(
                column(3, numericInput("user_min_cells", HTML("min.cells<br>(keep genes detected in at least <i>min.cells</i> cells)"), 100, min=0, max=NA)), #default value=100
-               column(3, numericInput("user_min_features", HTML("min.features<br>(keep cells with at least <i>min.features</i> genes detected)"), 500, min=0, max=NA)) #default value=500
+               column(3, numericInput("user_min_features", HTML("min.features<br>(keep cells with at least <i>min.features</i> genes detected)"), 500, min=0, max=NA)), #default value=500
+               column(3, numericInput("user_mt_gene_threshold", HTML("percent.mt<br>(keep cells with fewer than <i>percent.mt</i>% of genes mapping to mitochondrial genes)"), 5, min=0, max=100))
              ),
              
              #print dataset dimensions
@@ -184,8 +186,12 @@ server <- function(input, output, session){
   data_full <- reactive({get(input$dataset_full)})
   #subset dataset
   expr_matrix_subset <- reactive({GetAssayData(object=data_full(), slot="data")})
-  data_subset <- reactive({CreateSeuratObject(counts=expr_matrix_subset(), project="subset", min.cells=input$user_min_cells, min.features=input$user_min_features)})
-
+  data_subset <- reactive({
+    data_subset_genes_and_cells <- CreateSeuratObject(counts=expr_matrix_subset(), project="subset", min.cells=input$user_min_cells, min.features=input$user_min_features) #subset data based on min.cells and min.features (user_min_cells and user_min_features)
+    data_subset_genes_and_cells[["percent.mt"]] <- PercentageFeatureSet(data_subset_genes_and_cells, pattern="^MT-") #add mitochondrial genes column
+    data_subset_mt_genes <- subset(data_subset_genes_and_cells, subset=percent.mt<input$user_mt_gene_threshold) #subset data based on mitochondrial genes (user_mt_gene_threshold)
+    })
+  
   #print dimensions of dataset
   output$dataset_dimensions_tailored <- renderUI({
     #print dimensions
