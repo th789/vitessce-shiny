@@ -74,8 +74,8 @@ ui <- navbarPage(
                
                column(3, 
                       radioButtons("radiobutton_dataset", "Dataset",
-                                   choices=list("Select data from drop-down list"="data_select", "Upload data"="data_upload"),
-                                   selected="data_select")),
+                                   choices=c("Select data from drop-down list"="data_select", "Upload data"="data_upload"),
+                                   selected="data_upload")),
                column(3, selectInput("dataset_full", label="Select dataset", choices=data_full_list)), #select dataset from drop-down list
                column(6, fileInput("user_dataset", "Upload dataset (SeuratObject in .rds file)", accept=".rds")) #upload data
              ),
@@ -199,6 +199,31 @@ server <- function(input, output, session){
   ##### server: tailored demo ---------------------------------------------
   #full dataset
   data_full <- reactive({get(input$dataset_full)})
+  data_full <- reactive({readRDS(input$user_dataset$datapath)})
+  
+  #reactive
+  # data_full <- reactive({
+  #   if(input$radiobutton_dataset=="data_select"){get(input$dataset_full)}
+  #   if(input$radiobutton_dataset=="data_upload"){readRDS(input$user_dataset$datapath)}
+  # })
+
+  #eventReactive
+  # data_full <- eventReactive(input$radiobutton_dataset, { 
+  #   if(input$radiobutton_dataset=="data_select"){get(input$dataset_full) }
+  #   if(input$radiobutton_dataset=="data_upload"){readRDS(input$user_dataset$datapath) }
+  # })
+  
+  #observeEvent
+  # observeEvent(input$radiobutton_dataset, { 
+  #   
+  #   if(input$radiobutton_dataset=="data_select"){
+  #     data_full <- reactive({get(input$dataset_full)})
+  #   }
+  #   if(input$radiobutton_dataset=="data_upload"){
+  #     data_full <- reactive({readRDS(input$user_dataset$datapath)})
+  #   }
+  # })
+  
   #subset dataset
   expr_matrix_subset <- reactive({GetAssayData(object=data_full(), slot="data")})
   data_subset <- reactive({
