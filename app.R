@@ -33,6 +33,10 @@ data_pbmc_full <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_full
 data_full_list <- list(tcell_cd8="data_tcellcd8_full", pbmc="data_pbmc_full")
 
 
+# shiny app settings ------------------------------------------------------
+
+options(shiny.maxRequestSize = 500*1024^2) #limit file size to 500MB (for file upload)
+
 
 # user interface ----------------------------------------------------------
 
@@ -61,16 +65,21 @@ ui <- navbarPage(
   ##### ui: tailored demo -------------------------------------------------
   tabPanel("Tailored demo",
            fluidPage(
+             
              #select data
              h4("Dataset"),
-             selectInput("dataset_full", label=NULL, choices=data_full_list),
+             fluidRow(
+               column(3, selectInput("dataset_full", label="Select dataset", choices=data_full_list)), #select dataset from drop-down list
+               column(3, "or"),
+               column(6, fileInput("user_data", "Upload dataset (SeuratObject in .rds file)", accept=".rds")) #upload data
+             ),
              
              #select filtering criteria
              h4("Quality control: filter data"),
              fluidRow(
                column(3, numericInput("user_min_cells", HTML("min.cells<br>(keep genes detected in at least <i>min.cells</i> cells)"), 100, min=0, max=NA)), #default value=100
                column(3, numericInput("user_min_features", HTML("min.features<br>(keep cells with at least <i>min.features</i> genes detected)"), 500, min=0, max=NA)), #default value=500
-               column(4, numericInput("user_mt_gene_threshold", HTML("percent.mt<br>(keep cells with less than <i>percent.mt</i>% of genes mapping to mitochondrial genes)"), 5, min=0, max=100))
+               column(4, numericInput("user_mt_gene_threshold", HTML("percent.mt<br>(keep cells with less than <i>percent.mt</i>% of genes mapping to mitochondrial genes)"), 5, min=0, max=100)) #default value=5
              ),
              
              #print dataset dimensions
