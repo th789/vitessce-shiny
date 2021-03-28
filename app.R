@@ -33,9 +33,11 @@ data_pbmc_full <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_full
 data_full_list <- list(tcell_cd8="data_tcellcd8_full", pbmc="data_pbmc_full")
 
 
+
 # shiny app settings ------------------------------------------------------
 
 options(shiny.maxRequestSize = 500*1024^2) #limit file size to 500MB (for file upload)
+
 
 
 # user interface ----------------------------------------------------------
@@ -69,9 +71,13 @@ ui <- navbarPage(
              #select data
              h4("Dataset"),
              fluidRow(
+               
+               column(3, 
+                      radioButtons("radiobutton_dataset", "Dataset",
+                                   choices=list("Select data from drop-down list"="data_select", "Upload data"="data_upload"),
+                                   selected="data_select")),
                column(3, selectInput("dataset_full", label="Select dataset", choices=data_full_list)), #select dataset from drop-down list
-               column(3, "or"),
-               column(6, fileInput("user_data", "Upload dataset (SeuratObject in .rds file)", accept=".rds")) #upload data
+               column(6, fileInput("user_dataset", "Upload dataset (SeuratObject in .rds file)", accept=".rds")) #upload data
              ),
              
              #select filtering criteria
