@@ -66,11 +66,11 @@ ui <- navbarPage(
              selectInput("dataset_full", label=NULL, choices=data_full_list),
              
              #select filtering criteria
-             h4("Data subsetting"),
+             h4("Quality control: filter data"),
              fluidRow(
                column(3, numericInput("user_min_cells", HTML("min.cells<br>(keep genes detected in at least <i>min.cells</i> cells)"), 100, min=0, max=NA)), #default value=100
                column(3, numericInput("user_min_features", HTML("min.features<br>(keep cells with at least <i>min.features</i> genes detected)"), 500, min=0, max=NA)), #default value=500
-               column(3, numericInput("user_mt_gene_threshold", HTML("percent.mt<br>(keep cells with fewer than <i>percent.mt</i>% of genes mapping to mitochondrial genes)"), 5, min=0, max=100))
+               column(4, numericInput("user_mt_gene_threshold", HTML("percent.mt<br>(keep cells with less than <i>percent.mt</i>% of genes mapping to mitochondrial genes)"), 5, min=0, max=100))
              ),
              
              #print dataset dimensions
@@ -130,7 +130,7 @@ server <- function(input, output, session){
   #print dimensions of dataset
   output$dataset_dimensions <- renderUI({
     dim(data())
-    str_criteria <- "Filtering criteria <ul><li>min.cells = 100: keep genes detected in at least 100 cells</li><li>min.features = 500: keep cells with at least 500 genes detected</li></ul>"
+    str_criteria <- "Quality control (filtering criteria) <ul><li>min.cells = 100: keep genes detected in at least 100 cells</li><li>min.features = 500: keep cells with at least 500 genes detected</li><li>percent.mt = 5: keep cells with less than 5% of genes mapping to mitochondrial genes</li></ul>"
     str_dim_data <- paste("Dataset dimensions:", dim(data())[1], "genes x", dim(data())[2], "cells")
     HTML(paste(str_criteria, str_dim_data, sep=""))
     })
