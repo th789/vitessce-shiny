@@ -54,6 +54,30 @@ tabs_input_data <- tabsetPanel(
 
 # ui panels ---------------------------------------------------------------
 
+## basic demo -------------------------------------------------------------
+
+### sidebarpanel ----------------------------------------------------------
+
+basic_demo_sidebarpanel <- sidebarPanel(
+  
+  #specify sidebarPanel features height, width, and scroll bar
+  width=3,
+  style = "position: fixed; height: 87vh; width: 40vh; overflow-y: auto;",
+  
+  #1. select dataset from list of examples
+  h4("Dataset"),
+  selectInput("dataset", label=NULL, choices=data_list),
+  
+  #2. check dataset dimensions
+  h4("Dataset dimensions"),
+  htmlOutput("dataset_dimensions")
+)
+
+
+### mainpanel -------------------------------------------------------------
+
+
+
 ## tailored demo ----------------------------------------------------------
 
 ### sidebarpanel ----------------------------------------------------------
@@ -116,7 +140,6 @@ tailored_demo_sidebarpanel <- sidebarPanel(
 
 #main panel
 tailored_demo_mainpanel <- mainPanel(
-  #htmlOutput("dataset_dimensions_tailored"), #!!!REMOVE
   h4("Vitessce visualization"),
   vitessce_output(output_id="vitessce_visualization_tailored", height="650px", width="1030px")
 )
