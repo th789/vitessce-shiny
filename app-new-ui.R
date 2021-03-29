@@ -61,7 +61,7 @@ tailored_demo_sidebarpanel <- sidebarPanel(
   #specify sidebarPanel features height, width, and scroll bar
   style = "position: fixed; height: 87vh; width: 40vh; overflow-y: auto;",
   
-  ###1. Specify dataset
+  ###1. specify dataset
   h4("1. Specify dataset"),
   #input data type: select dataset or upload dataset
   selectInput(inputId="tailored_demo_input", label="Input data", 
@@ -69,6 +69,12 @@ tailored_demo_sidebarpanel <- sidebarPanel(
               ),
   #based on input data type: drop-down list (select dataset) or data browser (upload dataset)
   tabs_input_data,
+  
+  ###2. perform quality control
+  h4("2. Perform quality control (filter dataset)"),
+  numericInput("user_min_cells", HTML("min.cells<br>(keep genes detected in at least <i>min.cells</i> cells)"), 100, min=0, max=NA), #default value=100
+  numericInput("user_min_features", HTML("min.features<br>(keep cells with at least <i>min.features</i> genes detected)"), 500, min=0, max=NA), #default value=500
+  numericInput("user_mt_gene_threshold", HTML("percent.mt<br>(keep cells with less than <i>percent.mt</i>% of genes mapping to mitochondrial genes)"), 5, min=0, max=100), #default value=5
   
   
   
