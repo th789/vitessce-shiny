@@ -77,6 +77,12 @@ tailored_demo_sidebarpanel <- sidebarPanel(
   numericInput("user_mt_gene_threshold", HTML("percent.mt<br>(keep cells with less than <i>percent.mt</i>% of genes mapping to mitochondrial genes)"), 5, min=0, max=100), #default value=5
   
   
+  ###3. check dataset dimensions
+  h4("3. Check dataset dimensions"),
+  htmlOutput("dataset_dimensions_tailored"),
+  
+  
+  
   
   
   
