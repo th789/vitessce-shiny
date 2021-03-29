@@ -158,18 +158,163 @@ ui <- navbarPage(
 
 
 
-server <- function(input, output, session) {
+server <- function(input, output, session){
+## basic demo ----------------------------------------------------------
+
+    
+## tailored demo ----------------------------------------------------------
+
+  ###1. obtain full dataset 
+  #based on input$tailored_demo_input: selected dataset or uploaded dataset
   observeEvent(input$tailored_demo_input, {
     updateTabsetPanel(inputId="tailored_demo_input_data", selected=input$tailored_demo_input)
-  }) 
-  
-  
-  
+    }) 
+  #create data_full() reactive by getting selected dataset or loading uploaded dataset
   data_full <- reactive({
     switch(input$tailored_demo_input,
            select_data=get(input$dataset_full),
            upload_data=readRDS(input$user_dataset$datapath)
     )
+  })
+  
+  
+  ###2. perform quality control: filter dataset
+  expr_matrix_subset <- reactive({GetAssayData(object=data_full(), slot="data")})
+  data_subset <- reactive({
+    data_subset_genes_and_cells <- CreateSeuratObject(counts=expr_matrix_subset(), project="subset", min.cells=input$user_min_cells, min.features=input$user_min_features) #subset data based on min.cells and min.features (user_min_cells and user_min_features)
+    data_subset_genes_and_cells[["percent.mt"]] <- PercentageFeatureSet(data_subset_genes_and_cells, pattern="^MT-") #add mitochondrial genes column
+    data_subset_mt_genes <- subset(data_subset_genes_and_cells, subset=percent.mt<input$user_mt_gene_threshold) #subset data based on mitochondrial genes (user_mt_gene_threshold)
+  })
+  
+  ###3. print dataset dimensions
+  output$dataset_dimensions_tailored <- renderUI({
+    str_dim_data_full <- paste("Full dataset:", dim(data_full())[1], "genes x ", dim(data_full())[2], "cells")
+    str_dim_data_subset <- paste("Subsetted dataset:", dim(data_subset())[1], "genes x ", dim(data_subset())[2], "cells")
+    #print dimensions
+    HTML(paste(str_dim_data_full, str_dim_data_subset, sep="<br/>"))
+  })
+
+  ###4. create Vitessce visualization
+  #analyze data
+  data_tailored <- reactive({analyze_data(data_subset())})
+  
+  #vitessce visualization
+  output$vitessce_visualization_tailored <- render_vitessce(expr={
+    #create progress object
+    progress <- shiny::Progress$new()
+    progress$set(message="", value=0)
+    on.exit(progress$close()) #close the progress bar when this reactive exits
+    #function to update progress
+    n <- 2
+    updateProgress <- function(detail = NULL){
+      progress$inc(amount = 1/n, detail = detail)
+    }
+    
+    #vitessce --- set up widget
+    updateProgress("Creating Vitessce visualization")
+    vc <- VitessceConfig$new("My config")
+    dataset <- vc$add_dataset("My dataset")
+    
+    #vitessce --- set up views (panels)
+    dataset <- dataset$add_object(SeuratWrapper$new(data_tailored(), 
+                                                    cell_set_meta_names=list("seurat_clusters"), 
+                                                    num_genes=100))
+    ###create reactives based on inputs
+    #reactive: panels, analyses (column 1)
+    reactive_column_analyses <- reactive({
+      column_panels <- c()
+      if("pca" %in% input$checkboxes_analyses){
+        panel_scatterplot_pca <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="pca")
+        column_panels <- append(column_panels, panel_scatterplot_pca)
+      }
+      if("umap" %in% input$checkboxes_analyses){
+        panel_scatterplot_umap <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="umap")
+        column_panels <- append(column_panels, panel_scatterplot_umap)
+      }
+      if("tsne" %in% input$checkboxes_analyses){
+        panel_scatterplot_tsne <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="tsne")
+        column_panels <- append(column_panels, panel_scatterplot_tsne)
+      }
+      column_panels
+    })
+    
+    #reactive: panels, summaries (column 2)
+    reactive_column_summaries <- reactive({
+      column_panels <- c()
+      if("heatmap" %in% input$checkboxes_summaries){
+        panel_heatmap <- vc$add_view(dataset, Component$HEATMAP)
+        column_panels <- append(column_panels, panel_heatmap)
+      }
+      if("cell_set_sizes" %in% input$checkboxes_summaries){
+        panel_cellset_sizes <- vc$add_view(dataset, Component$CELL_SET_SIZES)
+        column_panels <- append(column_panels, panel_cellset_sizes)
+      }
+      column_panels
+    })
+    
+    #reactive: panels, description (column 3)
+    reactive_column_descrip <- reactive({
+      column_panels <- c()
+      if("dataset_descrip" %in% input$checkboxes_descrip){
+        panel_description <- vc$add_view(dataset, Component$DESCRIPTION)
+        panel_description <- panel_description$set_props(description = "Test")
+        column_panels <- append(column_panels, panel_description)
+      }
+      if("cell_sets" %in% input$checkboxes_descrip){
+        panel_cellsets <- vc$add_view(dataset, Component$CELL_SETS)
+        column_panels <- append(column_panels, panel_cellsets)
+      }
+      if("genes" %in% input$checkboxes_descrip){
+        panel_genes <- vc$add_view(dataset, Component$GENES)
+        column_panels <- append(column_panels, panel_genes)
+      }
+      column_panels
+    })
+    
+    #reactive: view options, link or unlink scatterplots
+    reactive_link_scatterplots <- reactive({
+      #link scatterplots
+      if("link_scatterplots" %in% input$checkboxes_view){
+        vc$link_views(reactive_column_analyses(),
+                      c(CoordinationType$EMBEDDING_ZOOM, CoordinationType$EMBEDDING_TARGET_X, CoordinationType$EMBEDDING_TARGET_Y),
+                      c_values=c(1, 0, 0)
+                      )
+        } #end "if" statement
+      #unlink scatterplots
+      else{
+        for(view in reactive_column_analyses()){
+          vc$link_views(c(view),
+                        c(CoordinationType$EMBEDDING_ZOOM, CoordinationType$EMBEDDING_TARGET_X, CoordinationType$EMBEDDING_TARGET_Y),
+                        c(1, 0, 0)
+                        )
+          } #end for loop: for(view in reactive_column_analyses())
+        } #end "else" statement
+    }) #end reactive: reactive_link_scatterplots
+    
+    
+    #reactive: view options, light or dark theme
+    reactive_light_theme <- reactive({
+      #light theme
+      if("light_theme" %in% input$checkboxes_view){vc$widget(theme="light")}
+      #dark theme
+      else{vc$widget(theme="dark")}
+    })
+    
+    #vitessce --- layout panels: run reactives to create/update columns
+    vc$layout(hconcat(do.call(vconcat, as.list(reactive_column_analyses())),
+                      do.call(vconcat, as.list(reactive_column_summaries())),
+                      do.call(vconcat, as.list(reactive_column_descrip()))
+    )
+    )
+    
+    #vitessce --- link or unlink scatterplots
+    reactive_link_scatterplots() 
+    
+    updateProgress("Complete!")
+    
+    #vitessce --- specify theme (light or dark)
+    reactive_light_theme()
+    
   })
   
   
