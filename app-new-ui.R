@@ -167,9 +167,9 @@ ui <- navbarPage(
   tabPanel(
     "Basic demo",
     fluidPage(
-
-    )
-  ),
+      sidebarLayout(basic_demo_sidebarpanel, basic_demo_mainpanel)
+    ) #end fluidPage
+  ), #end tabPanel
   
   ##### ui: tailored demo -------------------------------------------------
   tabPanel("Tailored demo",
