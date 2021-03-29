@@ -57,11 +57,26 @@ tabs_input_data <- tabsetPanel(
 
 #sidebarpanel
 tailored_demo_sidebarpanel <- sidebarPanel(
+  
+  #specify sidebarPanel features height, width, and scroll bar
+  style = "position: fixed; height: 87vh; width: 40vh; overflow-y: auto;",
+  
+  ###1. Specify dataset
+  h4("1. Specify dataset"),
+  #input data type: select dataset or upload dataset
   selectInput(inputId="tailored_demo_input", label="Input data", 
               choices = c("Select example dataset"="select_data", "Upload dataset"="upload_data")
-  ),
+              ),
+  #based on input data type: drop-down list (select dataset) or data browser (upload dataset)
   tabs_input_data,
-)
+  
+  
+  
+  
+  
+  
+  
+  )
 
 
 #main panel
