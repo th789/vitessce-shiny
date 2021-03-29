@@ -54,6 +54,9 @@ tabs_input_data <- tabsetPanel(
 
 # ui panels ---------------------------------------------------------------
 
+  ## tailored demo --------------------------------------------------------
+
+      ### sidebarpanel ----------------------------------------------------
 
 #sidebarpanel
 tailored_demo_sidebarpanel <- sidebarPanel(
@@ -76,20 +79,39 @@ tailored_demo_sidebarpanel <- sidebarPanel(
   numericInput("user_min_features", HTML("min.features<br>(keep cells with at least <i>min.features</i> genes detected)"), 500, min=0, max=NA), #default value=500
   numericInput("user_mt_gene_threshold", HTML("percent.mt<br>(keep cells with less than <i>percent.mt</i>% of genes mapping to mitochondrial genes)"), 5, min=0, max=100), #default value=5
   
-  
   ###3. check dataset dimensions
   h4("3. Check dataset dimensions"),
   htmlOutput("dataset_dimensions_tailored"),
   
+  ###4. specify vitessce visualization parameters
+  h4("4. Specify Vitessce visualization parameters"),
+  #row1: analyses and summaries
+  fluidRow(
+    column(6, checkboxGroupInput("checkboxes_analyses", label="Analyses",
+                                 choices=list("PCA"="pca", "UMAP"="umap", "t-SNE"="tsne"),
+                                 selected=c("pca", "umap", "tsne"))
+           ),
+    column(6, checkboxGroupInput("checkboxes_summaries", label="Summaries",
+                       choices=list("Heatmap"="heatmap", "Cell set sizes"="cell_set_sizes"),
+                       selected=c("heatmap", "cell_set_sizes"))
+           ),
+    ), #end fluidRow (row1)
+  #row2: description and view options
+  fluidRow(
+    column(6, checkboxGroupInput("checkboxes_descrip", label="Descriptions",
+                       choices=list("Dataset"="dataset_descrip", "Cell sets"="cell_sets", "Genes"="genes"),
+                       selected=c("dataset_descrip", "cell_sets", "genes"))
+           ),
+    column(6, checkboxGroupInput("checkboxes_view", label="View options",
+                       choices=list("Link scatterplots"="link_scatterplots", "Light theme"="light_theme"),
+                       selected=c("link_scatterplots", "light_theme"))
+           ),
+    ) #end fluidRow (row2)
   
-  
-  
-  
-  
-  
-  
-  )
+  ) #end sidebarPanel (end tailored_demo_sidebarpanel)
 
+
+### mainpanel ----------------------------------------------------------
 
 #main panel
 tailored_demo_mainpanel <- mainPanel(
