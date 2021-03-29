@@ -54,14 +54,15 @@ tabs_input_data <- tabsetPanel(
 
 # ui panels ---------------------------------------------------------------
 
-  ## tailored demo --------------------------------------------------------
+## tailored demo ----------------------------------------------------------
 
-      ### sidebarpanel ----------------------------------------------------
+### sidebarpanel ----------------------------------------------------------
 
 #sidebarpanel
 tailored_demo_sidebarpanel <- sidebarPanel(
   
   #specify sidebarPanel features height, width, and scroll bar
+  width=3,
   style = "position: fixed; height: 87vh; width: 40vh; overflow-y: auto;",
   
   ###1. specify dataset
@@ -111,11 +112,13 @@ tailored_demo_sidebarpanel <- sidebarPanel(
   ) #end sidebarPanel (end tailored_demo_sidebarpanel)
 
 
-### mainpanel ----------------------------------------------------------
+### mainpanel -------------------------------------------------------------
 
 #main panel
 tailored_demo_mainpanel <- mainPanel(
-  htmlOutput("dataset_dimensions_tailored"),
+  #htmlOutput("dataset_dimensions_tailored"), #!!!REMOVE
+  h4("Vitessce visualization"),
+  vitessce_output(output_id="vitessce_visualization_tailored", height="650px", width="1030px")
 )
 
 # ui ----------------------------------------------------------------------
@@ -171,11 +174,11 @@ server <- function(input, output, session) {
   
   
   #print dimensions of dataset
-  output$dataset_dimensions_tailored <- renderUI({
-    #print dimensions
-    str_dim_data_full <- paste("Full dataset:", dim(data_full())[1], "genes x ", dim(data_full())[2], "cells")
-    HTML(paste(str_dim_data_full, str_dim_data_full, sep="<br/>"))
-  })
+  # output$dataset_dimensions_tailored <- renderUI({
+  #   #print dimensions
+  #   str_dim_data_full <- paste("Full dataset:", dim(data_full())[1], "genes x ", dim(data_full())[2], "cells")
+  #   HTML(paste(str_dim_data_full, str_dim_data_full, sep="<br/>"))
+  # })
 }
 
 
