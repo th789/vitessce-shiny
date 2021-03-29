@@ -76,7 +76,11 @@ basic_demo_sidebarpanel <- sidebarPanel(
 
 ### mainpanel -------------------------------------------------------------
 
-
+basic_demo_mainpanel <- mainPanel(
+  #create vitessce visualization
+  h4("Vitessce visualization"),
+  vitessce_output(output_id="vitessce_visualization", height="650px", width="1030px")
+)
 
 ## tailored demo ----------------------------------------------------------
 
