@@ -1,0 +1,116 @@
+# load data & packages ----------------------------------------------------
+
+library(shiny)
+library(vitessce)
+library(Seurat)
+
+
+#####basic demo
+#load datasets
+data_tcellcd8_results <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd8_results.rds")
+data_pbmc_results <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_results.rds")
+#dataset list for selection
+data_list <- list(tcell_cd8="data_tcellcd8_results", pbmc="data_pbmc_results")
+
+data_descrip_list <- list(tcell_cd8="Dataset: CD8 T-cell \n Source: Zheng, G. X. Y. et al. Massively parallel digital transcriptional profiling of single cells. Nat. Commun. 8, 14049 doi: 10.1038/ncomms14049 (2017)", 
+                          pbmc="Dataset: peripheral blood mononuclear cells (PBMC) \n Source: 10x Genomics sample dataset")
+
+data_names_list <- list(tcell_cd8="tcellcd8", pbmc="pbmc")
+
+# descrip_tcell_cd8 = "Dataset: CD8 T-cell \n Source: Zheng, G. X. Y. et al. Massively parallel digital transcriptional profiling of single cells. Nat. Commun. 8, 14049 doi: 10.1038/ncomms14049 (2017)"
+# descrip_pbmc = "Dataset: peripheral blood mononuclear cells (PBMC) \n Source: 10x Genomics sample dataset"
+# data_list2 <- list(tcell_cd8=c("data_tcellcd8_results", "descrip_tcell_cd8"), 
+#                   pbmc=c("data_pbmc_results", "descrip_pbmc"))
+
+
+#####tailored demo
+#load datasets
+data_tcellcd8_full <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd8_full.rds")
+data_pbmc_full <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_full.rds")
+
+#dataset list for selection
+data_full_list <- list(tcell_cd8="data_tcellcd8_full", pbmc="data_pbmc_full")
+
+
+
+# shiny app settings ------------------------------------------------------
+
+options(shiny.maxRequestSize = 500*1024^2) #limit file size to 500MB (for file upload)
+
+
+# dynamic ui tabs ---------------------------------------------------------
+
+
+tabs_input_data <- tabsetPanel(
+  id="tailored_demo_input_data",
+  type="hidden",
+  tabPanel("select_data",
+           selectInput("dataset_full", label="Select example dataset", choices=data_full_list)
+  ),
+  tabPanel("upload_data", 
+           fileInput("user_dataset", "Upload dataset (SeuratObject in .rds file)", accept=".rds")
+  )
+)
+
+
+
+
+# panels for ui -----------------------------------------------------------
+
+
+#sidebarpanel
+tailored_demo_sidebarpanel <- sidebarPanel(
+  selectInput(inputId="tailored_demo_input", label="Input data", 
+              choices = c("Select example dataset"="select_data", "Upload dataset"="upload_data")
+  ),
+  tabs_input_data,
+)
+
+
+#main panel
+tailored_demo_mainpanel <- mainPanel(
+  htmlOutput("dataset_dimensions_tailored"),
+)
+
+# ui ----------------------------------------------------------------------
+
+
+ui <- fluidPage(
+  sidebarLayout(
+    tailored_demo_sidebarpanel,
+    tailored_demo_mainpanel
+  )
+)
+
+
+# server ------------------------------------------------------------------
+
+
+
+server <- function(input, output, session) {
+  observeEvent(input$tailored_demo_input, {
+    updateTabsetPanel(inputId="tailored_demo_input_data", selected=input$tailored_demo_input)
+  }) 
+  
+  
+  
+  data_full <- reactive({
+    switch(input$tailored_demo_input,
+           select_data=get(input$dataset_full),
+           upload_data=readRDS(input$user_dataset$datapath)
+    )
+  })
+  
+  
+  #print dimensions of dataset
+  output$dataset_dimensions_tailored <- renderUI({
+    #print dimensions
+    str_dim_data_full <- paste("Full dataset:", dim(data_full())[1], "genes x ", dim(data_full())[2], "cells")
+    HTML(paste(str_dim_data_full, str_dim_data_full, sep="<br/>"))
+  })
+}
+
+
+shinyApp(ui=ui,server=server)
+
+

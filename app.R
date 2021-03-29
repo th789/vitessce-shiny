@@ -41,6 +41,18 @@ options(shiny.maxRequestSize = 500*1024^2) #limit file size to 500MB (for file u
 
 
 # user interface ----------------------------------------------------------
+tabs_input_data <- tabsetPanel(
+  id="options_input_data",
+  type="hidden",
+  tabPanel("select",
+           numericInput("mean", "mean", value = 1),
+           numericInput("sd", "standard deviation", min = 0, value = 1)
+  ),
+  tabPanel("upload", 
+           numericInput("min", "min", value = 0),
+           numericInput("max", "max", value = 1)
+  )
+)
 
 ui <- navbarPage(
   "Vitessce",
@@ -68,17 +80,24 @@ ui <- navbarPage(
   tabPanel("Tailored demo",
            fluidPage(
              
+             # #select data OLD
+             # h4("Dataset"),
+             # fluidRow(
+             #   
+             #   column(3, 
+             #          radioButtons("radiobutton_dataset", "Dataset",
+             #                       choices=c("Select data from drop-down list"="data_select", "Upload data"="data_upload"),
+             #                       selected="data_upload")),
+             #   column(3, selectInput("dataset_full", label="Select dataset", choices=data_full_list)), #select dataset from drop-down list
+             #   column(6, fileInput("user_dataset", "Upload dataset (SeuratObject in .rds file)", accept=".rds")) #upload data
+             # ),
+             
              #select data
              h4("Dataset"),
-             fluidRow(
-               
-               column(3, 
-                      radioButtons("radiobutton_dataset", "Dataset",
-                                   choices=c("Select data from drop-down list"="data_select", "Upload data"="data_upload"),
-                                   selected="data_upload")),
-               column(3, selectInput("dataset_full", label="Select dataset", choices=data_full_list)), #select dataset from drop-down list
-               column(6, fileInput("user_dataset", "Upload dataset (SeuratObject in .rds file)", accept=".rds")) #upload data
-             ),
+             selectInput("input_data", "Dataset", 
+                         choices = c("select", "upload")),
+             tabs_input_data,
+             
              
              #select filtering criteria
              h4("Quality control: filter data"),
@@ -198,8 +217,8 @@ server <- function(input, output, session){
   
   ##### server: tailored demo ---------------------------------------------
   #full dataset
-  data_full <- reactive({get(input$dataset_full)})
-  data_full <- reactive({readRDS(input$user_dataset$datapath)})
+  # data_full <- reactive({get(input$dataset_full)})
+  # data_full <- reactive({readRDS(input$user_dataset$datapath)})
   
   #reactive
   # data_full <- reactive({
@@ -213,16 +232,16 @@ server <- function(input, output, session){
   #   if(input$radiobutton_dataset=="data_upload"){readRDS(input$user_dataset$datapath) }
   # })
   
-  #observeEvent
-  # observeEvent(input$radiobutton_dataset, { 
-  #   
-  #   if(input$radiobutton_dataset=="data_select"){
-  #     data_full <- reactive({get(input$dataset_full)})
-  #   }
-  #   if(input$radiobutton_dataset=="data_upload"){
-  #     data_full <- reactive({readRDS(input$user_dataset$datapath)})
-  #   }
-  # })
+  observeEvent
+  observeEvent(input$radiobutton_dataset, {
+
+    if(input$radiobutton_dataset=="data_select"){
+      data_full <- reactive(get(input$dataset_full))
+    }
+    if(input$radiobutton_dataset=="data_upload"){
+      data_full <- reactive(readRDS(input$user_dataset$datapath))
+    }
+  })
   
   #subset dataset
   expr_matrix_subset <- reactive({GetAssayData(object=data_full(), slot="data")})
