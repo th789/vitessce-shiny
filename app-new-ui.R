@@ -3,6 +3,7 @@
 library(shiny)
 library(vitessce)
 library(Seurat)
+source("tailored-demo-helpers.R")
 
 
 #####basic demo
@@ -17,10 +18,6 @@ data_descrip_list <- list(tcell_cd8="Dataset: CD8 T-cell \n Source: Zheng, G. X.
 
 data_names_list <- list(tcell_cd8="tcellcd8", pbmc="pbmc")
 
-# descrip_tcell_cd8 = "Dataset: CD8 T-cell \n Source: Zheng, G. X. Y. et al. Massively parallel digital transcriptional profiling of single cells. Nat. Commun. 8, 14049 doi: 10.1038/ncomms14049 (2017)"
-# descrip_pbmc = "Dataset: peripheral blood mononuclear cells (PBMC) \n Source: 10x Genomics sample dataset"
-# data_list2 <- list(tcell_cd8=c("data_tcellcd8_results", "descrip_tcell_cd8"), 
-#                   pbmc=c("data_pbmc_results", "descrip_pbmc"))
 
 
 #####tailored demo
@@ -55,7 +52,7 @@ tabs_input_data <- tabsetPanel(
 
 
 
-# panels for ui -----------------------------------------------------------
+# ui panels ---------------------------------------------------------------
 
 
 #sidebarpanel
@@ -75,12 +72,34 @@ tailored_demo_mainpanel <- mainPanel(
 # ui ----------------------------------------------------------------------
 
 
-ui <- fluidPage(
-  sidebarLayout(
-    tailored_demo_sidebarpanel,
-    tailored_demo_mainpanel
-  )
-)
+# ui <- fluidPage(
+#   sidebarLayout(
+#     tailored_demo_sidebarpanel,
+#     tailored_demo_mainpanel
+#   )
+# )
+
+
+
+ui <- navbarPage(
+  "Vitessce",
+  
+  ##### ui: basic demo ----------------------------------------------------
+  tabPanel(
+    "Basic demo",
+    fluidPage(
+
+    )
+  ),
+  
+  ##### ui: tailored demo -------------------------------------------------
+  tabPanel("Tailored demo",
+           fluidPage(
+             sidebarLayout(tailored_demo_sidebarpanel, tailored_demo_mainpanel)
+             ) #end fluidPage
+           ) #end tabPanel
+) #end navbarPage (end ui)
+
 
 
 # server ------------------------------------------------------------------
