@@ -186,9 +186,72 @@ ui <- navbarPage(
 
 
 server <- function(input, output, session){
-## basic demo ----------------------------------------------------------
-
+## basic demo -------------------------------------------------------------
+  
+  ###1. get data (based on selected dataset in input)
+  data <- reactive({get(input$dataset)})
+  
+  ###2. print dimensions of dataset
+  output$dataset_dimensions <- renderUI({
+    dim(data())
+    str_criteria <- "Quality control (filtering criteria) <ul><li>min.cells = 100: keep genes detected in at least 100 cells</li><li>min.features = 500: keep cells with at least 500 genes detected</li><li>percent.mt = 5: keep cells with less than 5% of genes mapping to mitochondrial genes</li></ul>"
+    str_dim_data <- paste("Dataset dimensions:", dim(data())[1], "genes x", dim(data())[2], "cells")
+    HTML(paste(str_criteria, str_dim_data, sep=""))
+  })
+  
+  ###3. vitessce visualization
+  output$vitessce_visualization <- render_vitessce(expr={
+    #create progress object
+    progress <- shiny::Progress$new()
+    progress$set(message = "", value = 0)
+    on.exit(progress$close()) #close the progress bar when this reactive exits
+    #function to update progress
+    n <- 2
+    updateProgress <- function(detail = NULL){
+      progress$inc(amount = 1/n, detail = detail)
+    }
     
+    #vitessce --- set up widget
+    updateProgress("Creating Vitessce visualization")
+    vc <- VitessceConfig$new("My config")
+    dataset <- vc$add_dataset("My dataset")
+    dataset <- dataset$add_object(SeuratWrapper$new(data(), 
+                                                    cell_set_meta_names=list("seurat_clusters"), 
+                                                    num_genes=100))
+    
+    
+    #vitessce --- add views (panels)
+    panel_scatterplot_pca <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="pca")
+    panel_scatterplot_umap <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="umap")
+    panel_scatterplot_tsne <- vc$add_view(dataset, Component$SCATTERPLOT, mapping="tsne")
+    panel_heatmap <- vc$add_view(dataset, Component$HEATMAP)
+    #panel_status <- vc$add_view(dataset, Component$STATUS)
+    panel_cellsets <- vc$add_view(dataset, Component$CELL_SETS)
+    panel_cellset_sizes <- vc$add_view(dataset, Component$CELL_SET_SIZES)
+    panel_genes <- vc$add_view(dataset, Component$GENES)
+    panel_description <- vc$add_view(dataset, Component$DESCRIPTION)
+    panel_description <- panel_description$set_props(description = "Test")
+    vc$layout(hconcat(vconcat(panel_scatterplot_pca, panel_scatterplot_umap, panel_scatterplot_tsne),
+                      vconcat(panel_heatmap, panel_cellset_sizes),
+                      vconcat(panel_description, 
+                              #panel_status, 
+                              panel_cellsets, panel_genes)))
+    
+    #vitessce --- link scatterplots
+    vc$link_views(
+      c(panel_scatterplot_pca, panel_scatterplot_umap, panel_scatterplot_tsne),
+      c(CoordinationType$EMBEDDING_ZOOM, CoordinationType$EMBEDDING_TARGET_X, CoordinationType$EMBEDDING_TARGET_Y),
+      c_values = c(1, 0, 0)
+    )
+    
+    #update progress bar
+    updateProgress("Complete!") 
+    
+    #vitessce --- specify theme
+    vc$widget(theme="light")
+    
+  }) #end vitessce visualization output
+  
 ## tailored demo ----------------------------------------------------------
 
   ###1. obtain full dataset 
@@ -241,8 +304,6 @@ server <- function(input, output, session){
     updateProgress("Creating Vitessce visualization")
     vc <- VitessceConfig$new("My config")
     dataset <- vc$add_dataset("My dataset")
-    
-    #vitessce --- set up views (panels)
     dataset <- dataset$add_object(SeuratWrapper$new(data_tailored(), 
                                                     cell_set_meta_names=list("seurat_clusters"), 
                                                     num_genes=100))
@@ -318,7 +379,6 @@ server <- function(input, output, session){
         } #end "else" statement
     }) #end reactive: reactive_link_scatterplots
     
-    
     #reactive: view options, light or dark theme
     reactive_light_theme <- reactive({
       #light theme
@@ -327,7 +387,7 @@ server <- function(input, output, session){
       else{vc$widget(theme="dark")}
     })
     
-    #vitessce --- layout panels: run reactives to create/update columns
+    #vitessce --- add views: use reactives to create/update/layout columns and panels
     vc$layout(hconcat(do.call(vconcat, as.list(reactive_column_analyses())),
                       do.call(vconcat, as.list(reactive_column_summaries())),
                       do.call(vconcat, as.list(reactive_column_descrip()))
@@ -337,22 +397,19 @@ server <- function(input, output, session){
     #vitessce --- link or unlink scatterplots
     reactive_link_scatterplots() 
     
+    #update progress bar
     updateProgress("Complete!")
     
     #vitessce --- specify theme (light or dark)
     reactive_light_theme()
     
-  })
+  }) #end vitessce visualization 
   
-  
-  #print dimensions of dataset
-  # output$dataset_dimensions_tailored <- renderUI({
-  #   #print dimensions
-  #   str_dim_data_full <- paste("Full dataset:", dim(data_full())[1], "genes x ", dim(data_full())[2], "cells")
-  #   HTML(paste(str_dim_data_full, str_dim_data_full, sep="<br/>"))
-  # })
-}
 
+} #end server
+
+
+# compile app -------------------------------------------------------------
 
 shinyApp(ui=ui,server=server)
 
