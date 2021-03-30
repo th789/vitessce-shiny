@@ -27,6 +27,9 @@ data_pbmc_full <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_full
 data_full_list <- list(tcell_cd8="data_tcellcd8_full", pbmc="data_pbmc_full")
 
 
+list_choices_names_dfs_tailored <- c("tcell_cd8"=data_tcellcd8_full, "pbmc"=data_pbmc_full) #name-df
+
+
 
 # shiny app settings ------------------------------------------------------
 
@@ -40,7 +43,7 @@ tabs_input_data <- tabsetPanel(
   id="tailored_demo_input_data",
   type="hidden",
   tabPanel("select_data",
-           selectInput("dataset_full", label="Select example dataset", choices=data_full_list)
+           selectInput("dataset_full", label="Select example dataset", choices=list_choices_names)
   ),
   tabPanel("upload_data", 
            fileInput("user_dataset", "Upload dataset (SeuratObject in .rds file)", accept=".rds")
@@ -261,11 +264,18 @@ server <- function(input, output, session){
   #create data_full() reactive by getting selected dataset or loading uploaded dataset
   data_full <- reactive({
     switch(input$tailored_demo_input,
-           select_data=get(input$dataset_full),
+           select_data = list_choices_names_dfs_tailored[[input$dataset_full]],
            upload_data=readRDS(input$user_dataset$datapath)
     )
   })
   
+  #create data_descrip_tailored() reactive to get dataset descriptionn
+  data_descrip_tailored <- reactive({
+    switch(input$tailored_demo_input,
+           select_data=list_choices_names_descrip[[input$dataset_full]],
+           upload_data="My data"
+    )
+  })
   
   ###2. perform quality control: filter dataset
   expr_matrix_subset <- reactive({GetAssayData(object=data_full(), slot="data")})
@@ -344,7 +354,7 @@ server <- function(input, output, session){
       column_panels <- c()
       if("dataset_descrip" %in% input$checkboxes_descrip){
         panel_description <- vc$add_view(dataset, Component$DESCRIPTION)
-        panel_description <- panel_description$set_props(description="add_data_info")
+        panel_description <- panel_description$set_props(description=data_descrip_tailored())
         column_panels <- append(column_panels, panel_description)
       }
       if("cell_sets" %in% input$checkboxes_descrip){
