@@ -10,13 +10,11 @@ source("tailored-demo-helpers.R")
 #load datasets
 data_tcellcd8_results <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd8_results.rds")
 data_pbmc_results <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_results.rds")
-#dataset list for selection
-data_list <- list(tcell_cd8="data_tcellcd8_results", pbmc="data_pbmc_results")
 
-data_descrip_list <- list(tcell_cd8="Dataset: CD8 T-cell \n Source: Zheng, G. X. Y. et al. Massively parallel digital transcriptional profiling of single cells. Nat. Commun. 8, 14049 doi: 10.1038/ncomms14049 (2017)", 
-                          pbmc="Dataset: peripheral blood mononuclear cells (PBMC) \n Source: 10x Genomics sample dataset")
-
-data_names_list <- list(tcell_cd8="tcellcd8", pbmc="pbmc")
+#create pairwise lists
+list_choices_names <- c("tcell_cd8"="tcell_cd8", "pbmc"="pbmc") #name-name
+list_choices_names_dfs <- c("tcell_cd8"=data_tcellcd8_results, "pbmc"=data_pbmc_results) #name-df
+list_choices_names_descrip <- c("tcell_cd8"="data_tcellcd8_info", "pbmc"="data_pbmc_info") #name-description
 
 
 
@@ -66,7 +64,7 @@ basic_demo_sidebarpanel <- sidebarPanel(
   
   #1. select dataset from list of examples
   h4("Dataset"),
-  selectInput("dataset", label=NULL, choices=data_list),
+  selectInput("dataset", label=NULL, choices=list_choices_names),
   
   #2. check dataset dimensions
   h4("Dataset dimensions"),
@@ -189,8 +187,9 @@ server <- function(input, output, session){
 ## basic demo -------------------------------------------------------------
   
   ###1. get data (based on selected dataset in input)
-  data <- reactive({get(input$dataset)})
-  
+  data <- reactive({list_choices_names_dfs[[input$dataset]]}) #get dataset
+  data_descrip <- reactive({list_choices_names_descrip[[input$dataset]]}) #get dataset description
+
   ###2. print dimensions of dataset
   output$dataset_dimensions <- renderUI({
     dim(data())
@@ -230,7 +229,7 @@ server <- function(input, output, session){
     panel_cellset_sizes <- vc$add_view(dataset, Component$CELL_SET_SIZES)
     panel_genes <- vc$add_view(dataset, Component$GENES)
     panel_description <- vc$add_view(dataset, Component$DESCRIPTION)
-    panel_description <- panel_description$set_props(description = "Test")
+    panel_description <- panel_description$set_props(description=data_descrip())
     vc$layout(hconcat(vconcat(panel_scatterplot_pca, panel_scatterplot_umap, panel_scatterplot_tsne),
                       vconcat(panel_heatmap, panel_cellset_sizes),
                       vconcat(panel_description, 
@@ -345,7 +344,7 @@ server <- function(input, output, session){
       column_panels <- c()
       if("dataset_descrip" %in% input$checkboxes_descrip){
         panel_description <- vc$add_view(dataset, Component$DESCRIPTION)
-        panel_description <- panel_description$set_props(description = "Test")
+        panel_description <- panel_description$set_props(description="add_data_info")
         column_panels <- append(column_panels, panel_description)
       }
       if("cell_sets" %in% input$checkboxes_descrip){
