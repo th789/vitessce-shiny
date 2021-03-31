@@ -63,7 +63,7 @@ basic_demo_sidebarpanel <- sidebarPanel(
   
   #specify sidebarPanel features height, width, and scroll bar
   width=3,
-  style = "position: fixed; height: 88.3vh; width: 40vh; overflow-y: auto;",
+  style = "position: fixed; height: 88.3vh; width: 42vh; overflow-y: auto;",
   
   #1. select dataset from list of examples
   h4("Dataset"),
@@ -92,7 +92,7 @@ tailored_demo_sidebarpanel <- sidebarPanel(
   
   #specify sidebarPanel features height, width, and scroll bar
   width=3,
-  style = "position: fixed; height: 88.3vh; width: 40vh; overflow-y: auto;",
+  style = "position: fixed; height: 88.3vh; width: 42vh; overflow-y: auto;",
   
   ###1. specify dataset
   h4("1. Specify dataset"),
@@ -287,8 +287,8 @@ server <- function(input, output, session){
   
   ###3. print dataset dimensions
   output$dataset_dimensions_tailored <- renderUI({
-    str_dim_data_full <- paste("Full dataset:", dim(data_full())[1], "genes x ", dim(data_full())[2], "cells")
-    str_dim_data_subset <- paste("Subsetted dataset:", dim(data_subset())[1], "genes x ", dim(data_subset())[2], "cells")
+    str_dim_data_full <- paste("<b>Full dataset</b><br>", dim(data_full())[1], "genes x ", dim(data_full())[2], "cells<br> ")
+    str_dim_data_subset <- paste("<b>Subsetted dataset</b><br>", dim(data_subset())[1], "genes x ", dim(data_subset())[2], "cells<br> <br>")
     #print dimensions
     HTML(paste(str_dim_data_full, str_dim_data_subset, sep="<br/>"))
   })
