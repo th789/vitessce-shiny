@@ -162,18 +162,18 @@ tailored_demo_mainpanel <- mainPanel(
 
 
 ui <- navbarPage(
-  "Vitessce",
+  "Vitessce Shiny",
   
   ##### ui: basic demo ----------------------------------------------------
   tabPanel(
-    "Basic demo",
+    "Demo",
     fluidPage(
       sidebarLayout(basic_demo_sidebarpanel, basic_demo_mainpanel)
     ) #end fluidPage
   ), #end tabPanel
   
   ##### ui: tailored demo -------------------------------------------------
-  tabPanel("Tailored demo",
+  tabPanel("Run analysis",
            fluidPage(
              sidebarLayout(tailored_demo_sidebarpanel, tailored_demo_mainpanel)
              ) #end fluidPage
