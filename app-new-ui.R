@@ -63,7 +63,7 @@ basic_demo_sidebarpanel <- sidebarPanel(
   
   #specify sidebarPanel features height, width, and scroll bar
   width=3,
-  style = "position: fixed; height: 87vh; width: 40vh; overflow-y: auto;",
+  style = "position: fixed; height: 88.3vh; width: 40vh; overflow-y: auto;",
   
   #1. select dataset from list of examples
   h4("Dataset"),
@@ -79,8 +79,8 @@ basic_demo_sidebarpanel <- sidebarPanel(
 
 basic_demo_mainpanel <- mainPanel(
   #create vitessce visualization
-  h4("Vitessce visualization"),
-  vitessce_output(output_id="vitessce_visualization", height="650px", width="1030px")
+  #h4("Vitessce visualization"),
+  vitessce_output(output_id="vitessce_visualization", height="700px", width="1030px")
 )
 
 ## tailored demo ----------------------------------------------------------
@@ -92,7 +92,7 @@ tailored_demo_sidebarpanel <- sidebarPanel(
   
   #specify sidebarPanel features height, width, and scroll bar
   width=3,
-  style = "position: fixed; height: 87vh; width: 40vh; overflow-y: auto;",
+  style = "position: fixed; height: 88.3vh; width: 40vh; overflow-y: auto;",
   
   ###1. specify dataset
   h4("1. Specify dataset"),
@@ -145,8 +145,8 @@ tailored_demo_sidebarpanel <- sidebarPanel(
 
 #main panel
 tailored_demo_mainpanel <- mainPanel(
-  h4("Vitessce visualization"),
-  vitessce_output(output_id="vitessce_visualization_tailored", height="650px", width="1030px")
+  #h4("Vitessce visualization"),
+  vitessce_output(output_id="vitessce_visualization_tailored", height="700px", width="1030px")
 )
 
 # ui ----------------------------------------------------------------------
