@@ -396,12 +396,27 @@ server <- function(input, output, session){
       else{vc$widget(theme="dark")}
     })
     
-    #vitessce --- add views: use reactives to create/update/layout columns and panels
-    vc$layout(hconcat(do.call(vconcat, as.list(reactive_column_analyses())),
-                      do.call(vconcat, as.list(reactive_column_summaries())),
-                      do.call(vconcat, as.list(reactive_column_descrip()))
-    )
-    )
+    
+    #panel_columns: list of columns (in Vitessce visualization) that are not empty
+    panel_columns <- list(analyses=reactive_column_analyses(), summaries=reactive_column_summaries(), descrip=reactive_column_descrip())
+    if(length(reactive_column_analyses())==0){panel_columns <- within(panel_columns, rm(analyses))}
+    if(length(reactive_column_summaries())==0){panel_columns <- within(panel_columns, rm(summaries))}
+    if(length(reactive_column_descrip())==0){panel_columns <- within(panel_columns, rm(descrip))}
+    
+    #apply do.call(vconcat) to every list (make as list) in panel_columns
+    panel_columns_vconcat <- lapply(panel_columns, function(x){do.call(vconcat, as.list(x))})
+    #apply do.call(hconcat) to the list 'panel_columns_vconcat'
+    panel_columns_hconcat <- do.call(hconcat, panel_columns_vconcat)
+    
+    #vitessce --- add views: create/update columns and panels
+    vc$layout(panel_columns_hconcat)
+    
+    # #vitessce --- add views: use reactives to create/update/layout columns and panels
+    # vc$layout(hconcat(do.call(vconcat, as.list(reactive_column_analyses())),
+    #                   do.call(vconcat, as.list(reactive_column_summaries())),
+    #                   do.call(vconcat, as.list(reactive_column_descrip()))
+    # )
+    # )
     
     #vitessce --- link or unlink scatterplots
     reactive_link_scatterplots() 
