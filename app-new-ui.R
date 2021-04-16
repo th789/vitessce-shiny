@@ -208,13 +208,13 @@ server <- function(input, output, session){
     progress$set(message = "", value = 0)
     on.exit(progress$close()) #close the progress bar when this reactive exits
     #function to update progress
-    n <- 2
+    n <- 3
     updateProgress <- function(detail = NULL){
       progress$inc(amount = 1/n, detail = detail)
     }
     
     #vitessce --- set up widget
-    updateProgress("Creating Vitessce visualization")
+    updateProgress("Demo: creating individual visualizations")
     vc <- VitessceConfig$new("My config")
     dataset <- vc$add_dataset("My dataset")
     dataset <- dataset$add_object(SeuratWrapper$new(data(), 
@@ -233,6 +233,7 @@ server <- function(input, output, session){
     panel_genes <- vc$add_view(dataset, Component$GENES)
     panel_description <- vc$add_view(dataset, Component$DESCRIPTION)
     panel_description <- panel_description$set_props(description=data_descrip())
+    updateProgress("Demo: assembling Vitessce visualization")
     vc$layout(hconcat(vconcat(panel_scatterplot_pca, panel_scatterplot_umap, panel_scatterplot_tsne),
                       vconcat(panel_heatmap, panel_cellset_sizes),
                       vconcat(panel_description, 
@@ -247,7 +248,7 @@ server <- function(input, output, session){
     )
     
     #update progress bar
-    updateProgress("Complete!") 
+    updateProgress("Demo: complete!") 
     
     #vitessce --- specify theme
     vc$widget(theme="light")
@@ -304,13 +305,13 @@ server <- function(input, output, session){
     progress$set(message="", value=0)
     on.exit(progress$close()) #close the progress bar when this reactive exits
     #function to update progress
-    n <- 2
+    n <- 3
     updateProgress <- function(detail = NULL){
       progress$inc(amount = 1/n, detail = detail)
     }
     
     #vitessce --- set up widget
-    updateProgress("Creating Vitessce visualization")
+    updateProgress("Analysis: creating individual visualizations")
     vc <- VitessceConfig$new("My config")
     dataset <- vc$add_dataset("My dataset")
     dataset <- dataset$add_object(SeuratWrapper$new(data_tailored(), 
@@ -368,6 +369,7 @@ server <- function(input, output, session){
       column_panels
     })
     
+    updateProgress("Analysis: assembling Vitessce visualization")
     #reactive: view options, link or unlink scatterplots
     reactive_link_scatterplots <- reactive({
       #link scatterplots
@@ -422,7 +424,7 @@ server <- function(input, output, session){
     reactive_link_scatterplots() 
     
     #update progress bar
-    updateProgress("Complete!")
+    updateProgress("Analysis: complete!")
     
     #vitessce --- specify theme (light or dark)
     reactive_light_theme()
