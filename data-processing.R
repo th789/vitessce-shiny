@@ -71,7 +71,6 @@ saveRDS(data_pbmc_results, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbm
 
 # t-cells CD8 -------------------------------------------------------------
 
-
 #full dataset
 data_tcellcd8_full <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg/datasets/tcellcd8/filtered_matrices_mex/hg19", 
                                 data_name="tcellcd8", 
@@ -94,8 +93,8 @@ data_tcellcd8_results <- analyze_data(data_tcellcd8_filtered)
 saveRDS(data_tcellcd8_results, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd8_results.rds")
 
 
-# t-cells CD4 -------------------------------------------------------------
 
+# t-cells CD4 -------------------------------------------------------------
 
 #full dataset
 data_tcellcd4_full <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg/datasets/tcellcd4/filtered_matrices_mex/hg19", 
@@ -113,13 +112,31 @@ data_tcellcd4_filtered <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlen
 data_tcellcd4_filtered <- subset(data_tcellcd4_filtered, subset=percent.mt<5) 
 dim(data_tcellcd4_filtered) #5827 x 7276
 
+
 #analyze data for vitessce visualization
 data_tcellcd4_results <- analyze_data(data_tcellcd4_filtered)
 saveRDS(data_tcellcd4_results, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd4_results.rds")
 
 
 
+# lung -------------------------------------------------------------
+
+#full dataset
+load("~/Dropbox/ddesktop/lab-gehlenborg/datasets/lung/droplet_normal_lung_blood_seurat_ntiss10x.P1.anno.20191002.RC4.Robj")
+data_lung_full <- UpdateSeuratObject(ntiss10x.P1.anno) #update "old seurat object" #26485 x 9744
+saveRDS(data_lung_full, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_lung_full.rds")
 
 
+#filtered dataset
+data_lung_filtered <- CreateSeuratObject(counts=data_lung_full@assays$RNA@counts, 
+                                         project="lung", min.cells=100, min.features=500) #12514 x 9744
+#quality control: detect amount of mitochondrial DNA
+data_lung_filtered[["percent.mt"]] <- PercentageFeatureSet(data_lung_filtered, pattern = "^MT-")
+data_lung_filtered <- subset(data_lung_filtered, subset=percent.mt<5) 
+dim(data_lung_filtered) #12514 x 9744
 
+
+#analyze data for vitessce visualization
+data_lung_results <- analyze_data(data_lung_filtered)
+saveRDS(data_lung_results, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_lung_results.rds")
 
