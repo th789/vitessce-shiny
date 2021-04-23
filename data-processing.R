@@ -140,3 +140,28 @@ dim(data_lung_filtered) #12514 x 9744
 data_lung_results <- analyze_data(data_lung_filtered)
 saveRDS(data_lung_results, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_lung_results.rds")
 
+
+
+# nsclc -------------------------------------------------------------
+
+#full dataset
+data_nsclc_full <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg/datasets/nsclc/filtered_gene_bc_matrices/GRCh38", 
+                                 data_name="nsclc", 
+                                 min_cells=0, 
+                                 min_features=0) #33694 x 7802
+saveRDS(data_nsclc_full, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_nsclc_full.rds")
+
+
+#filtered dataset
+data_nsclc_filtered <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg/datasets/nsclc/filtered_gene_bc_matrices/GRCh38", 
+                                     data_name="nsclc", 
+                                     min_cells=100, 
+                                     min_features=500) #12720 x 6782
+data_nsclc_filtered <- subset(data_nsclc_filtered, subset=percent.mt<5) 
+dim(data_nsclc_filtered) #12720 x 5034
+
+
+#analyze data for vitessce visualization
+data_nsclc_results <- analyze_data(data_nsclc_filtered)
+saveRDS(data_nsclc_results, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_nsclc_results.rds")
+
