@@ -401,8 +401,10 @@ server <- function(input, output, session){
     
     #panel_columns: list of columns (in Vitessce visualization) that are not empty
     panel_columns <- list(analyses=reactive_column_analyses(), summaries=reactive_column_summaries(), descrip=reactive_column_descrip())
+    #return error message if no panels (visualizations) are selected
     empty_visualization <- reactive({length(reactive_column_analyses())==0 & length(reactive_column_summaries())==0 & length(reactive_column_descrip())==0})
     validate(need(!empty_visualization(), "Please select at least one visualization"))
+    #remove list of columns (reactive_column_analyses, reactive_column_summaries, and reactive_column_descrip) that are empty
     if(length(reactive_column_analyses())==0){panel_columns <- within(panel_columns, rm(analyses))}
     if(length(reactive_column_summaries())==0){panel_columns <- within(panel_columns, rm(summaries))}
     if(length(reactive_column_descrip())==0){panel_columns <- within(panel_columns, rm(descrip))}
