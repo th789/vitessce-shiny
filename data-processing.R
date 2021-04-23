@@ -54,7 +54,6 @@ data_pbmc_full <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg/seu
 saveRDS(data_pbmc_full, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_full.rds")
 
 
-
 #filtered dataset
 data_pbmc_filtered <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg/seurat/filtered_gene_bc_matrices/hg19", 
                                     data_name="pbmc", 
@@ -62,6 +61,7 @@ data_pbmc_filtered <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg
                                     min_features=500) #4662 x 2482
 data_pbmc_filtered <- subset(data_pbmc_filtered, subset=percent.mt<5) 
 dim(data_pbmc_filtered) #4662 x 2439
+
 
 #analyze data for vitessce visualization
 data_pbmc_results <- analyze_data(data_pbmc_filtered)
@@ -80,7 +80,6 @@ data_tcellcd8_full <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg
 saveRDS(data_tcellcd8_full, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd8_full.rds")
 
 
-
 #filtered dataset
 data_tcellcd8_filtered <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg/datasets/tcellcd8/filtered_matrices_mex/hg19", 
                                     data_name="tcellcd8", 
@@ -89,8 +88,38 @@ data_tcellcd8_filtered <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlen
 data_tcellcd8_filtered <- subset(data_tcellcd8_filtered, subset=percent.mt<5) 
 dim(data_tcellcd8_filtered) #6171 x 7850
 
+
 #analyze data for vitessce visualization
 data_tcellcd8_results <- analyze_data(data_tcellcd8_filtered)
 saveRDS(data_tcellcd8_results, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd8_results.rds")
+
+
+# t-cells CD4 -------------------------------------------------------------
+
+
+#full dataset
+data_tcellcd4_full <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg/datasets/tcellcd4/filtered_matrices_mex/hg19", 
+                                    data_name="tcellcd4", 
+                                    min_cells=0, 
+                                    min_features=0) #32738 x 11213
+saveRDS(data_tcellcd4_full, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd4_full.rds")
+
+
+#filtered dataset
+data_tcellcd4_filtered <- read_10x_data(directory="~/Dropbox/ddesktop/lab-gehlenborg/datasets/tcellcd4/filtered_matrices_mex/hg19", 
+                                        data_name="tcellcd4", 
+                                        min_cells=100, 
+                                        min_features=500) #5827 x 7279
+data_tcellcd4_filtered <- subset(data_tcellcd4_filtered, subset=percent.mt<5) 
+dim(data_tcellcd4_filtered) #5827 x 7276
+
+#analyze data for vitessce visualization
+data_tcellcd4_results <- analyze_data(data_tcellcd4_filtered)
+saveRDS(data_tcellcd4_results, file="~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd4_results.rds")
+
+
+
+
+
 
 
