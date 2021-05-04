@@ -17,12 +17,11 @@ data_nsclc_results <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_nsclc
 #create pairwise lists
 list_choices_names <- c("tcell_cd4"="tcell_cd4", "tcell_cd8"="tcell_cd8", "pbmc"="pbmc", "lung"="lung", "nsclc"="nsclc") #name-name
 list_choices_names_dfs <- c("tcell_cd4"=data_tcellcd4_results, "tcell_cd8"=data_tcellcd8_results, "pbmc"=data_pbmc_results, "lung"=data_lung_results, "nsclc"=data_nsclc_results) #name-df
-list_choices_names_descrip <- c("tcell_cd4"="CD4 T cells \nZheng, G., Terry, J., Belgrader, P. et al. Massively parallel digital transcriptional profiling of single cells. Nat Commun 8, 14049 (2017).", 
-                                "tcell_cd8"="CD8 T cells \nZheng, G., Terry, J., Belgrader, P. et al. Massively parallel digital transcriptional profiling of single cells. Nat Commun 8, 14049 (2017).", 
-                                "pbmc"="Peripheral blood mononuclear cells (PBMC) \n 10X Genomics \nhttps://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/pbmc3k", 
-                                "lung"="data_lung_info", 
-                                "nsclc"="data_nsclc_info") #name-description
-
+list_choices_names_descrip <- c("tcell_cd4"="CD4 T cells -- Zheng, G., Terry, J., Belgrader, P. et al. Massively parallel digital transcriptional profiling of single cells. Nat Commun 8, 14049 (2017).", 
+                                "tcell_cd8"="CD8 T cells -- Zheng, G., Terry, J., Belgrader, P. et al. Massively parallel digital transcriptional profiling of single cells. Nat Commun 8, 14049 (2017).", 
+                                "pbmc"="Peripheral blood mononuclear cells (PBMC) -- 10X Genomics \nhttps://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/pbmc3k", 
+                                "lung"="Lung cells -- Travaglini, K.J., Nabhan, A.N., Penland, L. et al. A molecular cell atlas of the human lung from single-cell RNA sequencing. Nature 587, 619–625 (2020). ", 
+                                "nsclc"="Non-small cell lung cancer -- 10X Genomics https://support.10xgenomics.com/single-cell-vdj/datasets/2.2.0/vdj_v1_hs_nsclc_5gex") #name-description
 
 
 #####tailored demo
