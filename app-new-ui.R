@@ -8,26 +8,35 @@ source("tailored-demo-helpers.R")
 
 #####basic demo
 #load datasets
+data_tcellcd4_results <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd4_results.rds")
 data_tcellcd8_results <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd8_results.rds")
 data_pbmc_results <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_results.rds")
+data_lung_results <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_lung_results.rds")
+data_nsclc_results <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_nsclc_results.rds")
 
 #create pairwise lists
-list_choices_names <- c("tcell_cd8"="tcell_cd8", "pbmc"="pbmc") #name-name
-list_choices_names_dfs <- c("tcell_cd8"=data_tcellcd8_results, "pbmc"=data_pbmc_results) #name-df
-list_choices_names_descrip <- c("tcell_cd8"="data_tcellcd8_info", "pbmc"="data_pbmc_info") #name-description
+list_choices_names <- c("tcell_cd4"="tcell_cd4", "tcell_cd8"="tcell_cd8", "pbmc"="pbmc", "lung"="lung", "nsclc"="nsclc") #name-name
+list_choices_names_dfs <- c("tcell_cd4"=data_tcellcd4_results, "tcell_cd8"=data_tcellcd8_results, "pbmc"=data_pbmc_results, "lung"=data_lung_results, "nsclc"=data_nsclc_results) #name-df
+list_choices_names_descrip <- c("tcell_cd4"="CD4 T cells \nZheng, G., Terry, J., Belgrader, P. et al. Massively parallel digital transcriptional profiling of single cells. Nat Commun 8, 14049 (2017).", 
+                                "tcell_cd8"="CD8 T cells \nZheng, G., Terry, J., Belgrader, P. et al. Massively parallel digital transcriptional profiling of single cells. Nat Commun 8, 14049 (2017).", 
+                                "pbmc"="Peripheral blood mononuclear cells (PBMC) \n 10X Genomics \nhttps://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/pbmc3k", 
+                                "lung"="data_lung_info", 
+                                "nsclc"="data_nsclc_info") #name-description
 
 
 
 #####tailored demo
 #load datasets
+data_tcellcd4_full <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd4_full.rds")
 data_tcellcd8_full <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_tcellcd8_full.rds")
 data_pbmc_full <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_pbmc_full.rds")
+data_lung_full <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_lung_full.rds")
+data_nsclc_full <- readRDS("~/Dropbox/ddesktop/lab-gehlenborg/data/data_nsclc_full.rds")
 
 #dataset list for selection
-data_full_list <- list(tcell_cd8="data_tcellcd8_full", pbmc="data_pbmc_full")
+data_full_list <- list(tcell_cd4="data_tcellcd4_full", tcell_cd8="data_tcellcd8_full", pbmc="data_pbmc_full", lung="data_lung_full", nsclc="data_nsclc_full")
 
-
-list_choices_names_dfs_tailored <- c("tcell_cd8"=data_tcellcd8_full, "pbmc"=data_pbmc_full) #name-df
+list_choices_names_dfs_tailored <- c("tcell_cd4"=data_tcellcd4_full, "tcell_cd8"=data_tcellcd8_full, "pbmc"=data_pbmc_full, "lung"=data_lung_full, "nsclc"=data_nsclc_full) #name-df
 
 
 
