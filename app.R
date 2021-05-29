@@ -8,34 +8,34 @@ source("tailored-demo-helpers.R")
 
 #####basic demo
 #load datasets
+data_pbmc_results <- readRDS("data/data_pbmc_results.rds")
 data_tcellcd4_results <- readRDS("data/data_tcellcd4_results.rds")
 data_tcellcd8_results <- readRDS("data/data_tcellcd8_results.rds")
-data_pbmc_results <- readRDS("data/data_pbmc_results.rds")
 data_lung_results <- readRDS("data/data_lung_results.rds")
 data_nsclc_results <- readRDS("data/data_nsclc_results.rds")
 
 
 #create pairwise lists
-list_choices_names <- c("tcell_cd4"="tcell_cd4", "tcell_cd8"="tcell_cd8", "pbmc"="pbmc", "lung"="lung", "nsclc"="nsclc") #name-name
-list_choices_names_dfs <- c("tcell_cd4"=data_tcellcd4_results, "tcell_cd8"=data_tcellcd8_results, "pbmc"=data_pbmc_results, "lung"=data_lung_results, "nsclc"=data_nsclc_results) #name-df
-list_choices_names_descrip <- c("tcell_cd4"="CD4 T cells -- Zheng, G., Terry, J., Belgrader, P. et al. Massively parallel digital transcriptional profiling of single cells. Nat Commun 8, 14049 (2017).",
+list_choices_names <- c("pbmc"="pbmc", "tcell_cd4"="tcell_cd4", "tcell_cd8"="tcell_cd8", "lung"="lung", "nsclc"="nsclc") #name-name
+list_choices_names_dfs <- c("pbmc"=data_pbmc_results, "tcell_cd4"=data_tcellcd4_results, "tcell_cd8"=data_tcellcd8_results, "lung"=data_lung_results, "nsclc"=data_nsclc_results) #name-df
+list_choices_names_descrip <- c("pbmc"="Peripheral blood mononuclear cells (PBMC) -- 10X Genomics \nhttps://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/pbmc3k",
+                                "tcell_cd4"="CD4 T cells -- Zheng, G., Terry, J., Belgrader, P. et al. Massively parallel digital transcriptional profiling of single cells. Nat Commun 8, 14049 (2017).",
                                 "tcell_cd8"="CD8 T cells -- Zheng, G., Terry, J., Belgrader, P. et al. Massively parallel digital transcriptional profiling of single cells. Nat Commun 8, 14049 (2017).",
-                                "pbmc"="Peripheral blood mononuclear cells (PBMC) -- 10X Genomics \nhttps://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/pbmc3k",
                                 "lung"="Lung cells -- Travaglini, K.J., Nabhan, A.N., Penland, L. et al. A molecular cell atlas of the human lung from single-cell RNA sequencing. Nature 587, 619–625 (2020). ",
                                 "nsclc"="Non-small cell lung cancer -- 10X Genomics https://support.10xgenomics.com/single-cell-vdj/datasets/2.2.0/vdj_v1_hs_nsclc_5gex") #name-description
 
 
 #####tailored demo
 #load datasets
+data_pbmc_full <- readRDS("data/data_pbmc_full.rds")
 data_tcellcd4_full <- readRDS("data/data_tcellcd4_full.rds")
 data_tcellcd8_full <- readRDS("data/data_tcellcd8_full.rds")
-data_pbmc_full <- readRDS("data/data_pbmc_full.rds")
 data_lung_full <- readRDS("data/data_lung_full.rds")
 data_nsclc_full <- readRDS("data/data_nsclc_full.rds")
 
 #dataset list for selection
-data_full_list <- list(tcell_cd4="data_tcellcd4_full", tcell_cd8="data_tcellcd8_full", pbmc="data_pbmc_full", lung="data_lung_full", nsclc="data_nsclc_full")
-list_choices_names_dfs_tailored <- c("tcell_cd4"=data_tcellcd4_full, "tcell_cd8"=data_tcellcd8_full, "pbmc"=data_pbmc_full, "lung"=data_lung_full, "nsclc"=data_nsclc_full) #name-df
+data_full_list <- list(pbmc="data_pbmc_full", tcell_cd4="data_tcellcd4_full", tcell_cd8="data_tcellcd8_full", lung="data_lung_full", nsclc="data_nsclc_full")
+list_choices_names_dfs_tailored <- c("pbmc"=data_pbmc_full, "tcell_cd4"=data_tcellcd4_full, "tcell_cd8"=data_tcellcd8_full, "lung"=data_lung_full, "nsclc"=data_nsclc_full)
 
 
 # one dataset (large dataset) pbmc -------------------------------------------------------------
@@ -281,8 +281,8 @@ ui <- navbarPage(
 
 # server ------------------------------------------------------------------
 
-#OUT_DIR <- "/Users/than/Dropbox/ddesktop/lab-gehlenborg/vitessce-shiny/my_vitessce_files"
-OUT_DIR <- "./my_vitessce_files"
+OUT_DIR <- "/Users/than/Dropbox/ddesktop/lab-gehlenborg/vitessce-shiny/my_vitessce_files"
+#OUT_DIR <- "./my_vitessce_files"
 
 
 server <- function(input, output, session){
@@ -358,7 +358,9 @@ server <- function(input, output, session){
                        session$clientData$url_hostname,
                        ":",
                        session$clientData$url_port,
-                       "/vitessce-shiny/my-processed-data")
+                       "/my-processed-data"
+                       #"/vitessce-shiny/my-processed-data"
+                       )
     #vc$widget(theme="light")
     vc$widget(theme="light", serve=FALSE, base_url=BASE_URL)
     
@@ -374,7 +376,7 @@ server <- function(input, output, session){
   #create data_full() reactive by getting selected dataset or loading uploaded dataset
   data_full <- reactive({
     switch(input$tailored_demo_input,
-           select_data = list_choices_names_dfs_tailored[[input$dataset_full]],
+           select_data=list_choices_names_dfs_tailored[[input$dataset_full]],
            upload_data=readRDS(input$user_dataset$datapath)
     )
   })
@@ -507,7 +509,9 @@ server <- function(input, output, session){
                          session$clientData$url_hostname,
                          ":",
                          session$clientData$url_port,
-                         "/vitessce-shiny/my-processed-data")
+                         "/my-processed-data"
+                         #"/vitessce-shiny/my-processed-data"
+                         )
       #light theme
       if("light_theme" %in% input$checkboxes_view){vc$widget(theme="light", serve=FALSE, base_url=BASE_URL)}
       #dark theme
