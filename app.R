@@ -23,6 +23,11 @@ list_choices_names_descrip <- c("pbmc"="Peripheral blood mononuclear cells (PBMC
                                 "tcell_cd8"="CD8 T cells -- Zheng, G., Terry, J., Belgrader, P. et al. Massively parallel digital transcriptional profiling of single cells. Nat Commun 8, 14049 (2017).",
                                 "lung"="Lung cells -- Travaglini, K.J., Nabhan, A.N., Penland, L. et al. A molecular cell atlas of the human lung from single-cell RNA sequencing. Nature 587, 619–625 (2020). ",
                                 "nsclc"="Non-small cell lung cancer -- 10X Genomics https://support.10xgenomics.com/single-cell-vdj/datasets/2.2.0/vdj_v1_hs_nsclc_5gex") #name-description
+list_choices_filtering_criteria <- c("pbmc"="Quality control (filtering criteria) <ul><li>min.cells = 100: keep genes detected in at least 100 cells</li><li>min.features = 500: keep cells with at least 500 genes detected</li><li>percent.mt = 5: keep cells with less than 5% of genes mapping to mitochondrial genes</li></ul>",
+                                     "tcell_cd4"="Quality control (filtering criteria) <ul><li>min.cells = 100: keep genes detected in at least 100 cells</li><li>min.features = 500: keep cells with at least 500 genes detected</li><li>percent.mt = 5: keep cells with less than 5% of genes mapping to mitochondrial genes</li></ul>",
+                                     "tcell_cd8"="Quality control (filtering criteria) <ul><li>min.cells = 500: keep genes detected in at least 500 cells</li><li>min.features = 500: keep cells with at least 500 genes detected</li><li>percent.mt = 5: keep cells with less than 5% of genes mapping to mitochondrial genes</li></ul>",
+                                     "lung"="Quality control (filtering criteria) <ul><li>min.cells = 1500: keep genes detected in at least 1500 cells</li><li>min.features = 1500: keep cells with at least 1500 genes detected</li><li>percent.mt = 5: keep cells with less than 5% of genes mapping to mitochondrial genes</li></ul>",
+                                     "nsclc"="Quality control (filtering criteria) <ul><li>min.cells = 1000: keep genes detected in at least 1000 cells</li><li>min.features = 1000: keep cells with at least 1000 genes detected</li><li>percent.mt = 5: keep cells with less than 5% of genes mapping to mitochondrial genes</li></ul>") #name-description
 
 
 #####tailored demo
@@ -281,8 +286,8 @@ ui <- navbarPage(
 
 # server ------------------------------------------------------------------
 
-OUT_DIR <- "/Users/than/Dropbox/ddesktop/lab-gehlenborg/vitessce-shiny/my_vitessce_files"
-#OUT_DIR <- "./my_vitessce_files"
+#OUT_DIR <- "/Users/than/Dropbox/ddesktop/lab-gehlenborg/vitessce-shiny/my_vitessce_files"
+OUT_DIR <- "./my_vitessce_files"
 
 
 server <- function(input, output, session){
@@ -292,13 +297,15 @@ server <- function(input, output, session){
   
   ###1. get data (based on selected dataset in input)
   data <- reactive({list_choices_names_dfs[[input$dataset]]}) #get dataset
+  data_filtering_criteria <- reactive({list_choices_filtering_criteria[[input$dataset]]})
   data_descrip <- reactive({list_choices_names_descrip[[input$dataset]]}) #get dataset description
 
   ###2. print dimensions of dataset
   output$dataset_dimensions <- renderUI({
     dim(data())
-    str_criteria <- "Quality control (filtering criteria) <ul><li>min.cells = 100: keep genes detected in at least 100 cells</li><li>min.features = 500: keep cells with at least 500 genes detected</li><li>percent.mt = 5: keep cells with less than 5% of genes mapping to mitochondrial genes</li></ul>"
-    str_dim_data <- paste("Dataset dimensions:", dim(data())[1], "genes x", dim(data())[2], "cells")
+    #str_criteria <- "Quality control (filtering criteria) <ul><li>min.cells = 100: keep genes detected in at least 100 cells</li><li>min.features = 500: keep cells with at least 500 genes detected</li><li>percent.mt = 5: keep cells with less than 5% of genes mapping to mitochondrial genes</li></ul>"
+    str_criteria <- data_filtering_criteria() #string: dataset filtering criteria
+    str_dim_data <- paste("Dataset dimensions:", dim(data())[1], "genes x", dim(data())[2], "cells") #string: dataset dimensions
     HTML(paste(str_criteria, str_dim_data, sep=""))
   })
   
@@ -358,8 +365,8 @@ server <- function(input, output, session){
                        session$clientData$url_hostname,
                        ":",
                        session$clientData$url_port,
-                       "/my-processed-data"
-                       #"/vitessce-shiny/my-processed-data"
+                       #"/my-processed-data"
+                       "/vitessce-shiny/my-processed-data"
                        )
     #vc$widget(theme="light")
     vc$widget(theme="light", serve=FALSE, base_url=BASE_URL)
@@ -375,10 +382,12 @@ server <- function(input, output, session){
     }) 
   #create data_full() reactive by getting selected dataset or loading uploaded dataset
   data_full <- reactive({
+    req(input$tailored_demo_input)
     switch(input$tailored_demo_input,
            select_data=list_choices_names_dfs_tailored[[input$dataset_full]],
            upload_data=readRDS(input$user_dataset$datapath)
     )
+    
   })
   
   #create data_descrip_tailored() reactive to get dataset descriptionn
@@ -509,8 +518,8 @@ server <- function(input, output, session){
                          session$clientData$url_hostname,
                          ":",
                          session$clientData$url_port,
-                         "/my-processed-data"
-                         #"/vitessce-shiny/my-processed-data"
+                         #"/my-processed-data"
+                         "/vitessce-shiny/my-processed-data"
                          )
       #light theme
       if("light_theme" %in% input$checkboxes_view){vc$widget(theme="light", serve=FALSE, base_url=BASE_URL)}
