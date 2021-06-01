@@ -376,14 +376,13 @@ server <- function(input, output, session){
   observeEvent(input$tailored_demo_input, {
     updateTabsetPanel(inputId="tailored_demo_input_data", selected=input$tailored_demo_input)
     }) 
+  
   #create data_full() reactive by getting selected dataset or loading uploaded dataset
   data_full <- reactive({
-    req(input$tailored_demo_input)
     switch(input$tailored_demo_input,
            select_data=list_choices_names_dfs_tailored[[input$dataset_full]],
            upload_data=readRDS(input$user_dataset$datapath)
     )
-    
   })
   
   #create data_descrip_tailored() reactive to get dataset descriptionn
@@ -395,7 +394,9 @@ server <- function(input, output, session){
   })
   
   ###2. perform quality control: filter dataset
-  expr_matrix_subset <- reactive({GetAssayData(object=data_full(), slot="data")})
+  expr_matrix_subset <- reactive({
+    GetAssayData(object=data_full(), slot="data")
+    })
   data_subset <- reactive({
     data_subset_genes_and_cells <- CreateSeuratObject(counts=expr_matrix_subset(), project="subset", min.cells=input$user_min_cells, min.features=input$user_min_features) #subset data based on min.cells and min.features (user_min_cells and user_min_features)
     data_subset_genes_and_cells[["percent.mt"]] <- PercentageFeatureSet(data_subset_genes_and_cells, pattern="^MT-") #add mitochondrial genes column
@@ -412,7 +413,9 @@ server <- function(input, output, session){
 
   ###4. create Vitessce visualization
   #analyze data
-  data_tailored <- reactive({analyze_data(data_subset())})
+  data_tailored <- reactive({
+    analyze_data(data_subset())
+    })
   
   #vitessce visualization
   output$vitessce_visualization_tailored <- render_vitessce(expr={
