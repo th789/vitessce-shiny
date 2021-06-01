@@ -207,7 +207,7 @@ tailored_demo_sidebarpanel <- sidebarPanel(
   
   ###2. perform quality control
   h4("2. Perform quality control (filter dataset)"),
-  numericInput("user_min_cells", HTML("min.cells<br><span style='font-weight:normal'>keep genes detected in at least <i>min.cells</i> cells</span>"), 100, min=0, max=NA), #default value=100
+  numericInput("user_min_cells", HTML("min.cells<br><span style='font-weight:normal'>keep genes detected in at least <i>min.cells</i> cells</span>"), 1000, min=0, max=NA), #default value=100
   numericInput("user_min_features", HTML("min.features<br><span style='font-weight:normal'>keep cells with at least <i>min.features</i> genes detected</span>"), 500, min=0, max=NA), #default value=500
   numericInput("user_mt_gene_threshold", HTML("percent.mt<br><span style='font-weight:normal'>keep cells with less than <i>percent.mt</i>% of genes mapping to mitochondrial genes</span>"), 5, min=0, max=100), #default value=5
   

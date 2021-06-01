@@ -5,7 +5,7 @@ account: gehlenborglab
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 4104861
-bundleId: 4655525
+bundleId: 4665309
 url: https://gehlenborglab.shinyapps.io/vitessce-shiny/
-when: 1622335619.24558
-lastSyncTime: 1622335619.25506
+when: 1622569558.56259
+lastSyncTime: 1622569558.56263
