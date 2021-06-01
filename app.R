@@ -11,22 +11,19 @@ source("tailored-demo-helpers.R")
 data_pbmc_results <- readRDS("data/data_pbmc_results.rds")
 data_tcellcd4_results <- readRDS("data/data_tcellcd4_results.rds")
 data_tcellcd8_results <- readRDS("data/data_tcellcd8_results.rds")
-data_lung_results <- readRDS("data/data_lung_results.rds")
 data_nsclc_results <- readRDS("data/data_nsclc_results.rds")
 
 
 #create pairwise lists
-list_choices_names <- c("pbmc"="pbmc", "tcell_cd4"="tcell_cd4", "tcell_cd8"="tcell_cd8", "lung"="lung", "nsclc"="nsclc") #name-name
-list_choices_names_dfs <- c("pbmc"=data_pbmc_results, "tcell_cd4"=data_tcellcd4_results, "tcell_cd8"=data_tcellcd8_results, "lung"=data_lung_results, "nsclc"=data_nsclc_results) #name-df
+list_choices_names <- c("pbmc"="pbmc", "tcell_cd4"="tcell_cd4", "tcell_cd8"="tcell_cd8", "nsclc"="nsclc") #name-name
+list_choices_names_dfs <- c("pbmc"=data_pbmc_results, "tcell_cd4"=data_tcellcd4_results, "tcell_cd8"=data_tcellcd8_results, "nsclc"=data_nsclc_results) #name-df
 list_choices_names_descrip <- c("pbmc"="Peripheral blood mononuclear cells (PBMC) -- 10X Genomics \nhttps://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/pbmc3k",
                                 "tcell_cd4"="CD4 T cells -- Zheng, G., Terry, J., Belgrader, P. et al. Massively parallel digital transcriptional profiling of single cells. Nat Commun 8, 14049 (2017).",
                                 "tcell_cd8"="CD8 T cells -- Zheng, G., Terry, J., Belgrader, P. et al. Massively parallel digital transcriptional profiling of single cells. Nat Commun 8, 14049 (2017).",
-                                "lung"="Lung cells -- Travaglini, K.J., Nabhan, A.N., Penland, L. et al. A molecular cell atlas of the human lung from single-cell RNA sequencing. Nature 587, 619–625 (2020). ",
                                 "nsclc"="Non-small cell lung cancer -- 10X Genomics https://support.10xgenomics.com/single-cell-vdj/datasets/2.2.0/vdj_v1_hs_nsclc_5gex") #name-description
 list_choices_filtering_criteria <- c("pbmc"="Quality control (filtering criteria) <ul><li>min.cells = 100: keep genes detected in at least 100 cells</li><li>min.features = 500: keep cells with at least 500 genes detected</li><li>percent.mt = 5: keep cells with less than 5% of genes mapping to mitochondrial genes</li></ul>",
                                      "tcell_cd4"="Quality control (filtering criteria) <ul><li>min.cells = 100: keep genes detected in at least 100 cells</li><li>min.features = 500: keep cells with at least 500 genes detected</li><li>percent.mt = 5: keep cells with less than 5% of genes mapping to mitochondrial genes</li></ul>",
                                      "tcell_cd8"="Quality control (filtering criteria) <ul><li>min.cells = 500: keep genes detected in at least 500 cells</li><li>min.features = 500: keep cells with at least 500 genes detected</li><li>percent.mt = 5: keep cells with less than 5% of genes mapping to mitochondrial genes</li></ul>",
-                                     "lung"="Quality control (filtering criteria) <ul><li>min.cells = 1500: keep genes detected in at least 1500 cells</li><li>min.features = 1500: keep cells with at least 1500 genes detected</li><li>percent.mt = 5: keep cells with less than 5% of genes mapping to mitochondrial genes</li></ul>",
                                      "nsclc"="Quality control (filtering criteria) <ul><li>min.cells = 1000: keep genes detected in at least 1000 cells</li><li>min.features = 1000: keep cells with at least 1000 genes detected</li><li>percent.mt = 5: keep cells with less than 5% of genes mapping to mitochondrial genes</li></ul>") #name-description
 
 
@@ -35,12 +32,11 @@ list_choices_filtering_criteria <- c("pbmc"="Quality control (filtering criteria
 data_pbmc_full <- readRDS("data/data_pbmc_full.rds")
 data_tcellcd4_full <- readRDS("data/data_tcellcd4_full.rds")
 data_tcellcd8_full <- readRDS("data/data_tcellcd8_full.rds")
-data_lung_full <- readRDS("data/data_lung_full.rds")
 data_nsclc_full <- readRDS("data/data_nsclc_full.rds")
 
 #dataset list for selection
-data_full_list <- list(pbmc="data_pbmc_full", tcell_cd4="data_tcellcd4_full", tcell_cd8="data_tcellcd8_full", lung="data_lung_full", nsclc="data_nsclc_full")
-list_choices_names_dfs_tailored <- c("pbmc"=data_pbmc_full, "tcell_cd4"=data_tcellcd4_full, "tcell_cd8"=data_tcellcd8_full, "lung"=data_lung_full, "nsclc"=data_nsclc_full)
+data_full_list <- list(pbmc="data_pbmc_full", tcell_cd4="data_tcellcd4_full", tcell_cd8="data_tcellcd8_full", nsclc="data_nsclc_full")
+list_choices_names_dfs_tailored <- c("pbmc"=data_pbmc_full, "tcell_cd4"=data_tcellcd4_full, "tcell_cd8"=data_tcellcd8_full, "nsclc"=data_nsclc_full)
 
 
 # one dataset (large dataset) pbmc -------------------------------------------------------------
