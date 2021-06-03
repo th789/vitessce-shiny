@@ -6,17 +6,17 @@
 
 ## Usage
 
-### Basic demo
+### Tab: Demo
 
-The *Basic demo* page shows examples of Vitessce visualizations for sample datasets (for dataset information, see Datasets section below).
+The *Demo* tab shows examples of Vitessce visualizations for sample datasets (for information on the datasets, see Datasets section below).
 
-### Run analysis
+### Tab: Run analysis
 
-The *Run analysis* page allows for tailored analysis of Vitessce visualizations for sample single-cell datasets and user-uploaded, single-cell datasets.
+The *Run analysis* tab allows for tailored analysis of Vitessce visualizations for sample single-cell datasets and user-uploaded, single-cell datasets.
 
-**Select example dataset:** Upon choosing an example dataset, the analysis can be tailored by filtering the dataset (using min.cells, min.features, and percent.mt) and by customizing the Vitessce visualization (selecting the analyses, summaries, descriptions, and view options to display for the dataset). If dataset filtering conditions result in a dataset that is too large, the Shiny app will disconnect from the <shinyapps.io> server. Occasionally, when toggling between tabs, visualizations may appear distorted. This can be fixed by zooming in and then zooming out of the page.
+**Sample datasets (Input data = "Select example dataset"):** Upon choosing an sample dataset, the analysis can be tailored by filtering the dataset (using min.cells, min.features, and percent.mt) and by customizing the Vitessce visualization (selecting the analyses, summaries, descriptions, and view options to display for the dataset). If dataset filtering results in a dataset that is too large, the Shiny app will disconnect from the <shinyapps.io> server. Occasionally, when toggling between tabs, visualizations may appear distorted. This can be fixed by zooming in and then zooming out of the page.
 
-**Upload dataset:** Users can also upload a single-cell dataset to analyze in the form of an .rds file containing the single-cell dataset as a SeuratObject. For examples of the file format, see "_Run analysis_ datasets" (datasets ending in "_full.rds") under Datasets. Upon uploading the single-cell dataset, the analysis can be performed the same way as for example datasets described above. To further customize single-cell data analysis and visualization, see [Vitessce](http://beta.vitessce.io/).
+**User-uploaded datasets (Input data = "Upload dataset"):** Users can also upload a single-cell dataset in the form of an .rds file containing the single-cell dataset as a SeuratObject. For examples of the file format, see "_Run analysis_ datasets" (datasets ending in "_full.rds") under Datasets. Upon uploading the single-cell dataset, the analysis can be performed in the same way as that for sample datasets described above. To further customize single-cell data analysis and visualization, see [Vitessce](http://beta.vitessce.io/).
 
 
 
@@ -26,11 +26,11 @@ Sample datasets were obtained from the following sources:
 - Peripheral blood mononuclear cells (PBMC) -- 10X Genomics <https://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/pbmc3k>
 - CD4 T cells -- Zheng, G., Terry, J., Belgrader, P. et al. Massively parallel digital transcriptional profiling of single cells. Nat Commun 8, 14049 (2017).
 - CD8 T cells -- Zheng, G., Terry, J., Belgrader, P. et al. Massively parallel digital transcriptional profiling of single cells. Nat Commun 8, 14049 (2017).
-- Non-small cell lung cancer -- 10X Genomics <https://support.10xgenomics.com/single-cell-vdj/datasets/2.2.0/vdj_v1_hs_nsclc_5gex>
+- Non-small cell lung cancer cells -- 10X Genomics <https://support.10xgenomics.com/single-cell-vdj/datasets/2.2.0/vdj_v1_hs_nsclc_5gex>
 
-data-processing.R contains code used to process the raw data. The processed data sets can be found at the following links:
+data-processing.R contains code used to process the raw data. The processed datasets can be found at the following links:
 
-*Basic demo* datasets
+*Demo* datasets
 - <https://vitessce-export-examples.s3.amazonaws.com/shiny-app/data_pbmc_results.rds>
 - <https://vitessce-export-examples.s3.amazonaws.com/shiny-app/data_tcellcd4_results.rds>
 - <https://vitessce-export-examples.s3.amazonaws.com/shiny-app/data_tcellcd8_results.rds>
